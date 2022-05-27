@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -67,6 +68,22 @@ namespace testMVVM.ViewModels
 
         #endregion
 
+        #region ТестГрафика
+
+        /// <summary> Тестовый набор данных для визуализации графиков </summary>
+
+        private IEnumerable<Catch> _CatchData;
+
+        /// <summary> Тестовый набор данных для визуализации графиков </summary>
+
+        public IEnumerable<Catch> CatchData 
+        {
+            get => _CatchData;
+            set => Set(ref _CatchData, value); 
+        }
+
+        #endregion
+        
         #region Заголовок окна 
 
         private string _Title = "Поиск аномалий";
@@ -193,10 +210,29 @@ namespace testMVVM.ViewModels
 
             int student_index = 0;
 
-            IEnumerable<Catch> students = Enumerable.Range(1, 10).Select(i => new Catch
-            {
+            List<Catch> catch_report = new List<Catch>();
 
-            });
+            using(StreamReader reader = new StreamReader(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\catch.csv"))
+            {
+                reader.ReadLine();
+                while (!reader.EndOfStream)
+                {
+                    string[] catch_row = reader.ReadLine().Split(',');
+                    catch_report.Add(new Catch
+                    {
+                        Id_ves = Convert.ToInt32(catch_row[0]),
+                        Date = Convert.ToDateTime(catch_row[1]),
+                        Id_region = Convert.ToInt32(catch_row[2]),
+                        Id_fish = Convert.ToInt32(catch_row[3]),
+                        Catch_volume = Convert.ToDecimal(catch_row[4].Replace('.',',')),
+                        Id_regime = Convert.ToInt32(catch_row[5]),
+                        Permit = Convert.ToInt32(catch_row[6]),
+                        Id_own = Convert.ToInt32(catch_row[7])
+                    });
+                }
+            }
+
+            CatchData = catch_report;
 
             //var groups = Enumerable.Range(1, 20).Select(i => new Group()
             //{
@@ -212,9 +248,11 @@ namespace testMVVM.ViewModels
             data_list.Add(42);
        //     data_list.Add(Groups[1].DataBase[1]);
         //    data_list.Add(Groups[1]);
+            
+
 
             CompositeCollection = data_list.ToArray();
-
+            
         }
     }
 }

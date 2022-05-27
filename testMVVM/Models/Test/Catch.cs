@@ -5,15 +5,15 @@ namespace testMVVM.Models.Test
 {
     internal class Catch
     {
-        public int id_ves { get; set; }
-        public DateTime date { get; set; }
+        public int Id_ves { get; set; }
+        public DateTime Date { get; set; }
         
-        public int id_region { get; set; }
-        public int id_fish { get; set; }
-        public decimal catch_volume { get; set; }
-        public int id_regime { get; set; }
-        public int permit { get; set; }
-        public int own { get; set; }
+        public int Id_region { get; set; }
+        public int Id_fish { get; set; }
+        public decimal Catch_volume { get; set; }
+        public int Id_regime { get; set; }
+        public int Permit { get; set; }
+        public int Id_own { get; set; }
 
     }
 
