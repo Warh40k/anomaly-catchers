@@ -8,10 +8,10 @@ namespace testMVVM.Models.Test
         public int Id_ves { get; set; }
         public DateTime Date { get; set; }
         
-        public int Id_region { get; set; }
-        public int Id_fish { get; set; }
+        public string Id_region { get; set; }
+        public string Id_fish { get; set; }
         public decimal Catch_volume { get; set; }
-        public int Id_regime { get; set; }
+        public string Id_regime { get; set; }
         public int Permit { get; set; }
         public int Id_own { get; set; }
 

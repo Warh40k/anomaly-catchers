@@ -224,6 +224,15 @@ namespace testMVVM.ViewModels
 
             TestDataPoints = data_points;
 
+            #region Справочники
+            var fish = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\fish.csv");
+            var prod_designate = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\prod_designate.csv");
+            var prod_type = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\prod_type.csv");
+            var region = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\region.csv");
+            var regime = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\regime.csv");
+            #endregion
+
+
             List<Catch> catch_report = new List<Catch>();
 
             using(StreamReader reader = new StreamReader(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\catch.csv"))
@@ -236,10 +245,10 @@ namespace testMVVM.ViewModels
                     {
                         Id_ves = Convert.ToInt32(catch_row[0]),
                         Date = Convert.ToDateTime(catch_row[1]),
-                        Id_region = Convert.ToInt32(catch_row[2]),
-                        Id_fish = Convert.ToInt32(catch_row[3]),
-                        Catch_volume = Convert.ToDecimal(catch_row[4].Replace('.',',')),
-                        Id_regime = Convert.ToInt32(catch_row[5]),
+                        Id_region = region[catch_row[2]].Trim('"'),
+                        Id_fish = fish[catch_row[3]].Trim('"'),
+                        Catch_volume = Convert.ToDecimal(catch_row[4].Replace('.', ',')),
+                        Id_regime = regime[catch_row[5]].Trim('"'),
                         Permit = Convert.ToInt32(catch_row[6]),
                         Id_own = Convert.ToInt32(catch_row[7])
                     });
@@ -257,20 +266,21 @@ namespace testMVVM.ViewModels
                 while (!reader.EndOfStream)
                 {
                     string[] row = reader.ReadLine().Split(',');
-                    product_report.Add(new Product
-                    {
-                        Id_ves = Convert.ToInt32(row[0]),
-                        Date = Convert.ToDateTime(row[1]),
-                        Id_prod_designate = Convert.ToInt32(row[2]),
-                        Prod_type = Convert.ToInt32(row[3]),
-                        Prod_volume = Convert.ToDecimal(row[4].Replace('.',',')),
-                        Prod_board_volume = Convert.ToDecimal(row[5].Replace('.',',')),
-                    });
+                    var current_product = new Product();
+                    current_product.Id_ves = Convert.ToInt32(row[0]);
+                    current_product.Date = Convert.ToDateTime(row[1]);
+                    current_product.Id_prod_designate = prod_designate[row[2]].Trim('"');
+
+                    if (prod_type.ContainsKey(row[3])) current_product.Prod_type = prod_type[row[3]].Trim('"');
+                    current_product.Prod_volume = Convert.ToDecimal(row[4].Replace('.', ','));
+                    current_product.Prod_board_volume = Convert.ToDecimal(row[5].Replace('.', ','));
+
+                    product_report.Add(current_product);
                 }
             }
-            
-            
+
             ProductData = product_report;
+
            
             
 
@@ -306,20 +316,21 @@ namespace testMVVM.ViewModels
             //                     | NotifyFilters.Size;
 
         }
-        private List<Reference> GetReference(string path)
+        private Dictionary<string, string> GetReference(string path)
         {
-            List<Reference> reference = new List<Reference>();
+            Dictionary<string, string> reference = new Dictionary<string, string>();
+            string row_string = "";
             using(StreamReader reader = new StreamReader(path))
             {
                 reader.ReadLine();
                 while (!reader.EndOfStream)
                 {
-                    string[] row = reader.ReadLine().Split(',');
-                    reference.Add(new Reference
+                    row_string = reader.ReadLine();
+                    if (row_string != "")
                     {
-                        Id = Convert.ToInt32(row[0]),
-                        Name = row[1]
-                    });
+                        string[] row = row_string.Split(';');
+                        reference[row[0]] = row[1];
+                    }
                 }
             }
             return reference;

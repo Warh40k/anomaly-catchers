@@ -10,8 +10,8 @@ namespace testMVVM.Models.Test
     {
         public int Id_ves { get; set; }
         public DateTime Date {get; set;}
-        public int Id_prod_designate { get; set; }
-        public int Prod_type { get; set; }
+        public string Id_prod_designate { get; set; }
+        public string Prod_type { get; set; }
         public decimal Prod_volume { get; set; }
         public decimal Prod_board_volume { get; set; }
     }
