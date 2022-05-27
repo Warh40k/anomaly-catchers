@@ -69,16 +69,16 @@
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal">
                             <fa5:SvgAwesome Icon="Solid_Fish" Height="13" Margin="0,0,5,0"/>
-                            <TextBlock Text="База вылова"></TextBlock>
+                            <TextBlock Text="Базы"></TextBlock>
                             <!--<Image Source=""></Image>-->
                         </StackPanel>
                     </TabItem.Header>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="250"/>
-                            <ColumnDefinition/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
-                        <GroupBox Header="Элементы">
+                        <!--<GroupBox Header="Элементы">
                             <GroupBox.Resources>
                                 <DataTemplate DataType="{x:Type decanat:Group}">
                                     <TextBlock Text="{Binding Name, StringFormat=Группа {0}}"/>
@@ -88,15 +88,14 @@
                                 </DataTemplate>
                             </GroupBox.Resources>
                             <ListBox ItemsSource="{Binding CompositeCollection}" SelectedItem="{Binding SelectedCompositeValue}">
-                            </ListBox>
+                            </ListBox>-->
+                        <GroupBox Grid.Column="0" Header="База Вылова">
+                            <DataGrid></DataGrid> 
                         </GroupBox>
-                        <GroupBox Grid.Column="1" Header="Выбранный элемент">
+                        <GroupBox Grid.Column="1" Header="База переработки">
                             <GroupBox.Resources>
-                                <DataTemplate DataType="{x:Type decanat:Group}">
+                                <DataTemplate DataType="{x:Type decanat:Catch}">
                                     <TextBlock Text="{Binding Name, StringFormat=Таблица {0}}"/>
-                                </DataTemplate>
-                                <DataTemplate DataType="{x:Type decanat:DataBase}">
-                                    <TextBlock Text="{Binding Name, StringFormat=Элемент {0}}"/>
                                 </DataTemplate>
                             </GroupBox.Resources>
                             <ContentControl Content="{Binding SelectedCompositeValue}" HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -119,11 +118,8 @@
                         </Grid.ColumnDefinitions>
                         <GroupBox Header="Элементы">
                             <GroupBox.Resources>
-                                <DataTemplate DataType="{x:Type decanat:Group}">
+                                <DataTemplate DataType="{x:Type decanat:Catch}">
                                     <TextBlock Text="{Binding Name, StringFormat=Группа {0}}"/>
-                                </DataTemplate>
-                                <DataTemplate DataType="{x:Type decanat:DataBase}">
-                                    <TextBlock Text="{Binding Name, StringFormat=Элемент {0}}"/>
                                 </DataTemplate>
                             </GroupBox.Resources>
                             <ListBox ItemsSource="{Binding CompositeCollection}" SelectedItem="{Binding SelectedCompositeValue}">
@@ -131,11 +127,8 @@
                         </GroupBox>
                         <GroupBox Grid.Column="1" Header="Выбранный элемент">
                             <GroupBox.Resources>
-                                <DataTemplate DataType="{x:Type decanat:Group}">
+                                <DataTemplate DataType="{x:Type decanat:Catch}">
                                     <TextBlock Text="{Binding Name, StringFormat=Таблица {0}}"/>
-                                </DataTemplate>
-                                <DataTemplate DataType="{x:Type decanat:DataBase}">
-                                    <TextBlock Text="{Binding Name, StringFormat=Элемент {0}}"/>
                                 </DataTemplate>
                             </GroupBox.Resources>
                             <ContentControl Content="{Binding SelectedCompositeValue}" HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -202,7 +195,7 @@
                             </DockPanel>
                         </GroupBox>
                         <GroupBox Header="{Binding SelectedGroup.Name, StringFormat='', FallbackValue='Данные', TargetNullValue='Группа не выбрана'}" Grid.Column="1" >
-                            <DataGrid ItemsSource="{Binding SelectedGroup.DataBase}"
+                            <DataGrid ItemsSource="{Binding SelectedGroup.Catch}"
                                       AutoGenerateColumns="False"
                                       CanUserAddRows="False"
                                       AlternatingRowBackground="LightGray">

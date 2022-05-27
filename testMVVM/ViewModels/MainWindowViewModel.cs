@@ -15,7 +15,7 @@ namespace testMVVM.ViewModels
 {
     internal class MainWindowViewModel : ViewModel
     {
-        public ObservableCollection<Group> Groups { get; }
+        //public ObservableCollection<Group> Groups { get; }
 
         public object[] CompositeCollection { get; }
 
@@ -30,8 +30,8 @@ namespace testMVVM.ViewModels
         /// Выбранная группа в списке
         /// </summary>
 
-        private Group _SelectedGroup;
-        public Group SelectedGroup { get => _SelectedGroup; set => Set(ref _SelectedGroup, value); } 
+       // private Group _SelectedGroup;
+        //public Group SelectedGroup { get => _SelectedGroup; set => Set(ref _SelectedGroup, value); } 
 
         #endregion
 
@@ -130,41 +130,41 @@ namespace testMVVM.ViewModels
 
         #endregion
 
-        #region CreateGroupCommand
+        //#region CreateGroupCommand
 
-        public ICommand CreateGroupCommand { get; }
+        //public ICommand CreateGroupCommand { get; }
 
-        private bool CanCreateGroupCommandExecute(object p) => true;
+        //private bool CanCreateGroupCommandExecute(object p) => true;
 
-        private void OnCreateGroupCommandExecuted(object p)
-        {
-            var group_max_index = Groups.Count + 1;
-            var new_group = new Group
-            {
-                Name = $"Группа {group_max_index}",
-                DataBase = new ObservableCollection<DataBase>()
-            };
+        //private void OnCreateGroupCommandExecuted(object p)
+        //{
+        //    var group_max_index = Groups.Count + 1;
+        //    var new_group = new Group
+        //    {
+        //        Name = $"Группа {group_max_index}",
+        //        DataBase = new ObservableCollection<DataBase>()
+        //    };
 
-            Groups.Add(new_group);
-        }
+        //    Groups.Add(new_group);
+        //}
 
-        #endregion
+        //#endregion
 
-        #region DeleteGroupCommand
+        //#region DeleteGroupCommand
 
-        public ICommand DeleteGroupCommand { get; }
+        //public ICommand DeleteGroupCommand { get; }
 
-        private bool CanDeleteGroupCommandExecute(object p) => p is Group group && Groups.Contains(group);
-        private void OnDeleteGroupCommandExecuted(object p)
-        {
-            if (!(p is Group group)) return;
-            int group_index = Groups.IndexOf(group);
-            Groups.Remove(group);
-            if (group_index < Groups.Count)
-                SelectedGroup = Groups[group_index];
-        }
+        //private bool CanDeleteGroupCommandExecute(object p) => p is Group group && Groups.Contains(group);
+        //private void OnDeleteGroupCommandExecuted(object p)
+        //{
+        //    if (!(p is Group group)) return;
+        //    int group_index = Groups.IndexOf(group);
+        //    Groups.Remove(group);
+        //    if (group_index < Groups.Count)
+        //        SelectedGroup = Groups[group_index];
+        //}
 
-        #endregion
+        //#endregion
 
         #endregion
         /*********************************************************************************************************************************************/
@@ -174,8 +174,8 @@ namespace testMVVM.ViewModels
 
             CloseApplicationCommand = new RelatedCommand(OnCloseApplicationCommandExecuted, CanCloseApplicationCommandExecute);
             ChangeSelectedIndexCommand = new RelatedCommand(OnChangeSelectedIndexCommandExecuted, CanChangeSelectedIndexCommandExecute);
-            CreateGroupCommand = new RelatedCommand(OnCreateGroupCommandExecuted, CanCreateGroupCommandExecute);
-            DeleteGroupCommand = new RelatedCommand(OnDeleteGroupCommandExecuted, CanDeleteGroupCommandExecute);
+//            CreateGroupCommand = new RelatedCommand(OnCreateGroupCommandExecuted, CanCreateGroupCommandExecute);
+ //           DeleteGroupCommand = new RelatedCommand(OnDeleteGroupCommandExecuted, CanDeleteGroupCommandExecute);
 
             #endregion
 
@@ -192,32 +192,28 @@ namespace testMVVM.ViewModels
             TestDataPoints = data_points;
 
             int student_index = 0;
-            IEnumerable<DataBase> students = Enumerable.Range(1, 10).Select(i => new DataBase
-            {
-                Name = $"Name {student_index}",
-                Surname = $"Surname {student_index}",
-                Patronymic = $"Patronymic {student_index++}",
-                Birthday = DateTime.Now,
-                Rating = 0
-            }); 
 
-            var groups = Enumerable.Range(1, 20).Select(i => new Group()
+            IEnumerable<Catch> students = Enumerable.Range(1, 10).Select(i => new Catch
             {
-                Name = "Группа" + i.ToString(),
-                DataBase = new ObservableCollection<DataBase>(students)
+
             });
 
-            Groups = new ObservableCollection<Group>(groups);
+            //var groups = Enumerable.Range(1, 20).Select(i => new Group()
+            //{
+            //    Name = "Группа" + i.ToString(),
+            //    DataBase = new ObservableCollection<DataBase>(students)
+            //});
+
+           // Groups = new ObservableCollection<Group>(groups);
 
             var data_list = new List<object>();
 
             data_list.Add("Hello World");
             data_list.Add(42);
-            data_list.Add(Groups[1].DataBase[1]);
-            data_list.Add(Groups[1]);
+       //     data_list.Add(Groups[1].DataBase[1]);
+        //    data_list.Add(Groups[1]);
 
             CompositeCollection = data_list.ToArray();
-
 
         }
     }
