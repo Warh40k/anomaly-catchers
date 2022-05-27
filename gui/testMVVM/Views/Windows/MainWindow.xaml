@@ -61,7 +61,7 @@
         <Grid Width="Auto">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="15*" MinWidth="150" MaxWidth="500"/>
-                <ColumnDefinition Width="70*"/>
+                <ColumnDefinition Width="80*"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Vertical">
                 <Label Content="Путь к первой базе №1"></Label>
@@ -95,20 +95,52 @@
                         </StackPanel>
                     </TabItem.Header>
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="30*"/>
-                            <ColumnDefinition Width="70*"/>
-                        </Grid.ColumnDefinitions>
-                        <GroupBox Grid.Column="0" Header="Таблицы">
-                            <GroupBox.Resources>
-                                <DataTemplate DataType="{x:Type vm:MainWindowViewModel}">
-                                    <!--<TextBlock Text="{Binding Name, StringFormat=Таблица {0}}"/>-->
-                                    <DataGrid ItemsSource="{Binding ProductData}"/>
-                                </DataTemplate>
-                            </GroupBox.Resources>
-                            <ListBox ItemsSource="{Binding CompositeCollection}" SelectedItem="{Binding SelectedCompositeValue}">
-                            </ListBox>
-                        </GroupBox>
+                        <!--<Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDeddfinition Width="15*"/>
+                        </Grid.ColumnDefinitions>-->
+                        <TabControl TabStripPlacement="Left" Margin="0,0,0,0" VerticalAlignment="Stretch" FontSize="14">
+                            <TabControl.Resources>
+                                <Style TargetType="{x:Type TabItem}">
+                                    <Setter Property="Width" Value="120"/>
+                                    <Setter Property="Padding" Value="10,10"/>
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                </Style>
+                            </TabControl.Resources>
+                            <!--<TabControl.Resources>
+                                <Style TargetType="{x:Type TabItem}">
+                                    <Setter Property="HeaderTemplate">
+                                        <Setter.Value>
+                                            <DataTemplate>
+                                                <ContentPresenter Content="{TemplateBinding Content}">
+                                                    <ContentPresenter.LayoutTransform>
+                                                        <RotateTransform Angle="270" />
+                                                    </ContentPresenter.LayoutTransform>
+                                                </ContentPresenter>
+                                            </DataTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Padding" Value="3" />
+                                </Style>
+                            </TabControl.Resources>-->
+
+                            <TabItem HorizontalAlignment="Left" Header="Переработка">
+                                <GroupBox Grid.Column="1" Header="База Вылова" Grid.ColumnSpan="2">
+                                    <DataGrid EnableRowVirtualization="True" ItemsSource="{Binding CatchData}" IsReadOnly="True"></DataGrid>
+                                </GroupBox>
+                            </TabItem> 
+                            <TabItem HorizontalAlignment="Left" Header="Вылов">
+                                <GroupBox Grid.Column="1" Header="База Вылова" Grid.ColumnSpan="2">
+                                    <DataGrid EnableRowVirtualization="True" ItemsSource="{Binding ProductData}" IsReadOnly="True"></DataGrid>
+                                </GroupBox>
+                            </TabItem> 
+                            <TabItem HorizontalAlignment="Left" Header="Ext">
+                                <GroupBox Grid.Column="1" Header="База Вылова" Grid.ColumnSpan="2">
+                                    <DataGrid EnableRowVirtualization="True" ItemsSource="{Binding CatchData}" IsReadOnly="True"></DataGrid>
+                                </GroupBox>
+                            </TabItem> 
+                            <TabItem HorizontalAlignment="Left" Header="Ext2"></TabItem> 
+                        </TabControl>
                         <!--<GroupBox Header="Элементы">
                             <GroupBox.Resources>
                                 <DataTemplate DataType="{x:Type decanat:Group}">
@@ -121,9 +153,6 @@
                             <ListBox ItemsSource="{Binding CompositeCollection}" SelectedItem="{Binding SelectedCompositeValue}">
                             </ListBox>-->
 
-                        <GroupBox Grid.Column="1" Header="База Вылова" Grid.ColumnSpan="2">
-                            <DataGrid EnableRowVirtualization="True" ItemsSource="{Binding CatchData}" IsReadOnly="True"></DataGrid>
-                        </GroupBox>
 
                         <!--<GroupBox Grid.Column="1" Header="База переработки">
                             -->
