@@ -17,7 +17,7 @@ namespace testMVVM
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             FolderBrowserDialog dialog = new FolderBrowserDialog();
-            dialog.RootFolder = Environment.SpecialFolder.MyComputer;
+            dialog.SelectedPath = @"C:\Users\user\source\repos\anomaly-catchers\gui\testMVVM\Data\db1";
             var result = dialog.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)
                 db1_textbox.Text = dialog.SelectedPath;
@@ -27,7 +27,7 @@ namespace testMVVM
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             FolderBrowserDialog dialog = new FolderBrowserDialog();
-            dialog.RootFolder = Environment.SpecialFolder.MyComputer;
+            dialog.SelectedPath = @"C:\Users\user\source\repos\anomaly-catchers\gui\testMVVM\Data\db2";
             var result = dialog.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)
                 db2_textbox.Text = dialog.SelectedPath;

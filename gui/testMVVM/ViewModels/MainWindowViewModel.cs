@@ -27,7 +27,7 @@ namespace testMVVM.ViewModels
 
         #endregion
 
-        #region Путь к базе данных №1
+        #region Путь к базе данных №2
 
         private object _Db2Path;
         public object Db2Path { get => _Db2Path; set => Set(ref _Db2Path, value); }
@@ -45,7 +45,7 @@ namespace testMVVM.ViewModels
         /// Выбранная группа в списке
         /// </summary>
 
-       // private Group _SelectedGroup;
+        // private Group _SelectedGroup;
         //public Group SelectedGroup { get => _SelectedGroup; set => Set(ref _SelectedGroup, value); } 
 
         #endregion
@@ -74,10 +74,10 @@ namespace testMVVM.ViewModels
 
         /// <summary> Тестовый набор данных для визуализации графиков </summary>
 
-        public IEnumerable<DataPoint> TestDataPoints 
+        public IEnumerable<DataPoint> TestDataPoints
         {
             get => _TestDataPoints;
-            set => Set(ref _TestDataPoints, value); 
+            set => Set(ref _TestDataPoints, value);
         }
 
         #endregion
@@ -90,10 +90,10 @@ namespace testMVVM.ViewModels
 
         /// <summary> Тестовый набор данных для визуализации графиков </summary>
 
-        public IEnumerable<Catch> CatchData 
+        public IEnumerable<Catch> CatchData
         {
             get => _CatchData;
-            set => Set(ref _CatchData, value); 
+            set => Set(ref _CatchData, value);
         }
 
         #endregion
@@ -166,7 +166,7 @@ namespace testMVVM.ViewModels
         #endregion
 
         #region ChangeSelectedIndexCommand
-        
+
         public ICommand ChangeSelectedIndexCommand { get; }
 
         private bool CanChangeSelectedIndexCommandExecute(object p) => _SelectedPageIndex >= 0;
@@ -178,9 +178,9 @@ namespace testMVVM.ViewModels
         }
 
         #endregion
-        
+
         #region ConfirmPathCommand
-        public ICommand ImportConfirmCommand{ get; }
+        public ICommand ImportConfirmCommand { get; }
 
         private bool CanImportConfirmCommandExecute(object p) => true;
         private void OnImportConfirmCommandExecuted(object p)
@@ -190,7 +190,7 @@ namespace testMVVM.ViewModels
 
         #endregion
 
-              //#region CreateGroupCommand
+        //#region CreateGroupCommand
 
         //public ICommand CreateGroupCommand { get; }
 
@@ -241,7 +241,7 @@ namespace testMVVM.ViewModels
 
             var data_points = new List<DataPoint>((int)(360 / 0.1));
 
-            for(var x = 0d; x <= 360; x += 0.1)
+            for (var x = 0d; x <= 360; x += 0.1)
             {
                 const double to_rad = Math.PI / 180;
                 var y = Math.Sin(x * to_rad);
@@ -277,8 +277,8 @@ namespace testMVVM.ViewModels
 
             //ProductData = product_report;
 
-           
-            
+
+
 
 
             //var groups = Enumerable.Range(1, 20).Select(i => new Group()
@@ -287,15 +287,15 @@ namespace testMVVM.ViewModels
             //    DataBase = new ObservableCollection<DataBase>(students)
             //});
 
-           // Groups = new ObservableCollection<Group>(groups);
+            // Groups = new ObservableCollection<Group>(groups);
 
             var data_list = new List<object>();
 
             data_list.Add("Hello World");
             data_list.Add(42);
-       //     data_list.Add(Groups[1].DataBase[1]);
-        //    data_list.Add(Groups[1]);
-            
+            //     data_list.Add(Groups[1].DataBase[1]);
+            //    data_list.Add(Groups[1]);
+
 
 
             CompositeCollection = data_list.ToArray();
@@ -314,9 +314,10 @@ namespace testMVVM.ViewModels
         }
         private Dictionary<string, string> GetReference(string path)
         {
+
             Dictionary<string, string> reference = new Dictionary<string, string>();
             string row_string = "";
-            using(StreamReader reader = new StreamReader(path))
+            using (StreamReader reader = new StreamReader(path))
             {
                 reader.ReadLine();
                 while (!reader.EndOfStream)
@@ -329,65 +330,76 @@ namespace testMVVM.ViewModels
                     }
                 }
             }
+            
             return reference;
         }
 
         private void Import()
         {
             #region Справочники
-            var fish = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\fish.csv");
-            var prod_designate = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\prod_designate.csv");
-            var prod_type = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\prod_type.csv");
-            var region = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\region.csv");
-            var regime = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\regime.csv");
-            #endregion
 
-            List<Catch> catch_report = new List<Catch>();
-
-            using(StreamReader reader = new StreamReader(Db1Path + @"\catch.csv"))
+            try
             {
-                reader.ReadLine();
-                while (!reader.EndOfStream)
+                var fish = GetReference(Db1Path + @"\ref\fish.csv");
+                var prod_designate = GetReference(Db1Path + @"\ref\prod_designate.csv");
+                var prod_type = GetReference(Db1Path + @"\ref\prod_type.csv");
+                var region = GetReference(Db1Path + @"\ref\region.csv");
+                var regime = GetReference(Db1Path + @"\ref\regime.csv");
+
+                #endregion
+
+                List<Catch> catch_report = new List<Catch>();
+
+                using(StreamReader reader = new StreamReader(Db1Path + @"\catch.csv"))
                 {
-                    string[] catch_row = reader.ReadLine().Split(',');
-                    catch_report.Add(new Catch
+                    reader.ReadLine();
+                    while (!reader.EndOfStream)
                     {
-                        Id_ves = Convert.ToInt32(catch_row[0]),
-                        Date = Convert.ToDateTime(catch_row[1]),
-                        Id_region = region[catch_row[2]].Trim('"'),
-                        Id_fish = fish[catch_row[3]].Trim('"'),
-                        Catch_volume = Convert.ToDecimal(catch_row[4].Replace('.', ',')),
-                        Id_regime = regime[catch_row[5]].Trim('"'),
-                        Permit = Convert.ToInt32(catch_row[6]),
-                        Id_own = Convert.ToInt32(catch_row[7])
-                    });
+                        string[] catch_row = reader.ReadLine().Split(',');
+                        catch_report.Add(new Catch
+                        {
+                            Id_ves = int.Parse(catch_row[0]),
+                            Date = DateTime.Parse(catch_row[1]),
+                            Id_region = region[catch_row[2]].Trim('"'),
+                            Id_fish = fish[catch_row[3]].Trim('"'),
+                            Catch_volume = decimal.Parse(catch_row[4].Replace('.', ',')),
+                            Id_regime = regime[catch_row[5]].Trim('"'),
+                            Permit = int.Parse(catch_row[6]),
+                            Id_own = int.Parse(catch_row[7])
+                        });
+                    }
                 }
-            }
 
-            CatchData = catch_report;
+                CatchData = catch_report;
 
-            List<Product> product_report = new List<Product>();
+                List<Product> product_report = new List<Product>();
 
-            using(StreamReader reader = new StreamReader(Db1Path + @"\product.csv"))
-            {
-                reader.ReadLine();
-                while (!reader.EndOfStream)
+                using(StreamReader reader = new StreamReader(Db1Path + @"\product.csv"))
                 {
-                    string[] row = reader.ReadLine().Split(',');
-                    var current_product = new Product();
-                    current_product.Id_ves = Convert.ToInt32(row[0]);
-                    current_product.Date = Convert.ToDateTime(row[1]);
-                    current_product.Id_prod_designate = prod_designate[row[2]].Trim('"');
+                    reader.ReadLine();
+                    while (!reader.EndOfStream)
+                    {
+                        string[] row = reader.ReadLine().Split(',');
+                        var current_product = new Product();
+                        current_product.Id_ves = int.Parse(row[0]);
+                        current_product.Date = DateTime.Parse(row[1]);
+                        current_product.Id_prod_designate = prod_designate[row[2]].Trim('"');
 
-                    if (prod_type.ContainsKey(row[3])) current_product.Prod_type = prod_type[row[3]].Trim('"');
-                    current_product.Prod_volume = Convert.ToDecimal(row[4].Replace('.', ','));
-                    current_product.Prod_board_volume = Convert.ToDecimal(row[5].Replace('.', ','));
+                        if (prod_type.ContainsKey(row[3])) current_product.Prod_type = prod_type[row[3]].Trim('"');
+                        current_product.Prod_volume = decimal.Parse(row[4].Replace('.', ','));
+                        current_product.Prod_board_volume = decimal.Parse(row[5].Replace('.', ','));
 
-                    product_report.Add(current_product);
+                        product_report.Add(current_product);
+                    }
                 }
+
+                ProductData = product_report;
+            }
+            catch(IOException ex)
+            {
+                MessageBox.Show(ex.Message);
             }
 
-            ProductData = product_report;
         }
     }
 }
