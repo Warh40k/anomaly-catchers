@@ -20,6 +20,20 @@ namespace testMVVM.ViewModels
 
         public object[] CompositeCollection { get; }
 
+        #region Путь к базе данных №1
+
+        private string _Db1Path;
+        public string Db1Path { get => _Db1Path; set => Set(ref _Db1Path, value); }
+
+        #endregion
+
+        #region Путь к базе данных №1
+
+        private string _Db2Path;
+        public string Db2Path { get => _Db2Path; set => Set(ref _Db2Path, value); }
+
+        #endregion
+
         #region Выбранный непонятный элемент
 
         private object _SelectedCompositeValue;
@@ -165,6 +179,16 @@ namespace testMVVM.ViewModels
 
         #endregion
 
+        #region ConfirmPathCommand
+
+        public ICommand ConfirmPathCommand { get; }
+
+        private bool CanConfirmPathCommandExecute(object p) => true;
+
+        private void OnConfirmPathCommandExecuted(object p)
+        {
+
+        }
         //#region CreateGroupCommand
 
         //public ICommand CreateGroupCommand { get; }
@@ -231,7 +255,6 @@ namespace testMVVM.ViewModels
             var region = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\region.csv");
             var regime = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\regime.csv");
             #endregion
-
 
             List<Catch> catch_report = new List<Catch>();
 
