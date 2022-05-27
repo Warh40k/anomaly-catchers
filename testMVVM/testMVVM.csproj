@@ -96,6 +96,7 @@
     <Compile Include="Infrastructure\Commands\RelatedCommand.cs" />
     <Compile Include="Models\Country.cs" />
     <Compile Include="Models\Test\Catch.cs" />
+    <Compile Include="Models\Test\Product.cs" />
     <Compile Include="ViewModels\Base\ViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Views\Windows\MainWindow.xaml.cs">

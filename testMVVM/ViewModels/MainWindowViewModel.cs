@@ -234,6 +234,7 @@ namespace testMVVM.ViewModels
 
             CatchData = catch_report;
 
+
             //var groups = Enumerable.Range(1, 20).Select(i => new Group()
             //{
             //    Name = "Группа" + i.ToString(),
