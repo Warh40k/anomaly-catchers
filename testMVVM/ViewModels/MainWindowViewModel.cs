@@ -68,7 +68,7 @@ namespace testMVVM.ViewModels
 
         #endregion
 
-        #region ТестГрафика
+        #region Данные вылова
 
         /// <summary> Тестовый набор данных для визуализации графиков </summary>
 
@@ -83,7 +83,17 @@ namespace testMVVM.ViewModels
         }
 
         #endregion
-        
+
+        #region Данные переработки
+
+        private IEnumerable<Product> _ProductData;
+        public IEnumerable<Product> ProductData
+        {
+            get => _ProductData;
+            set => Set(ref _ProductData, value);
+        }
+
+        #endregion
         #region Заголовок окна 
 
         private string _Title = "Поиск аномалий";
@@ -235,6 +245,27 @@ namespace testMVVM.ViewModels
             CatchData = catch_report;
 
 
+            List<Product> product_report = new List<Product>();
+
+            using(StreamReader reader = new StreamReader(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\product.csv"))
+            {
+                reader.ReadLine();
+                while (!reader.EndOfStream)
+                {
+                    string[] row = reader.ReadLine().Split(',');
+                    product_report.Add(new Product
+                    {
+                        Id_ves = Convert.ToInt32(row[0]),
+                        Date = Convert.ToDateTime(row[1]),
+                        Id_prod_designate = Convert.ToInt32(row[2]),
+                        Prod_type = Convert.ToInt32(row[3]),
+                        Prod_volume = Convert.ToDecimal(row[4].Replace('.',',')),
+                        Prod_board_volume = Convert.ToDecimal(row[5].Replace('.',',')),
+                    });
+                }
+            }
+
+            ProductData = product_report;
             //var groups = Enumerable.Range(1, 20).Select(i => new Group()
             //{
             //    Name = "Группа" + i.ToString(),

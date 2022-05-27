@@ -63,13 +63,16 @@
                 <ColumnDefinition Width="10*" MinWidth="150" MaxWidth="500"/>
                 <ColumnDefinition Width="70*"/>
             </Grid.ColumnDefinitions>
-
+            <StackPanel Grid.Column="0">
+                <Label Content="Путь к базе вылова"></Label>
+                <Label Content="Путь к базе переработки"></Label>
+            </StackPanel>
             <TabControl Width= "Auto" Grid.Column ="1" HorizontalAlignment="Stretch" SelectedIndex="{Binding SelectedPageIndex}" >
                 <TabItem MaxWidth="1000">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal">
                             <fa5:SvgAwesome Icon="Solid_Fish" Height="13" Margin="0,0,5,0"/>
-                            <TextBlock Text="Базы"></TextBlock>
+                            <TextBlock Text="Базы вылова и переработки"></TextBlock>
                             <!--<Image Source=""></Image>-->
                         </StackPanel>
                     </TabItem.Header>
@@ -93,13 +96,14 @@
                             <DataGrid ItemsSource="{Binding CatchData}"></DataGrid> 
                         </GroupBox>
                         <GroupBox Grid.Column="1" Header="База переработки">
-                            <GroupBox.Resources>
+                            <!--<GroupBox.Resources>
                                 <DataTemplate DataType="{x:Type decanat:Catch}">
                                     <TextBlock Text="{Binding Name, StringFormat=Таблица {0}}"/>
                                 </DataTemplate>
-                            </GroupBox.Resources>
-                            <ContentControl Content="{Binding SelectedCompositeValue}" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                            FontSize="60"/>
+                            </GroupBox.Resources>-->
+                            <!--<ContentControl Content="{Binding SelectedCompositeValue}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            FontSize="60"/>-->
+                            <DataGrid ItemsSource="{Binding ProductData}"></DataGrid>
                         </GroupBox>
                     </Grid>
                 </TabItem>
