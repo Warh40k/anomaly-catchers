@@ -118,6 +118,14 @@ namespace testMVVM.ViewModels
 
         #endregion
 
+        #region Справочник рыба
+        private IEnumerable<Reference> _FishReference;
+        public IEnumerable<Reference> FishReference
+        {
+            get => _FishReference;
+            set => Set(ref _FishReference, value);
+        }
+        #endregion
         #region Status: string - Статус программы
 
         ///<summary>Статус программы</summary>
@@ -201,8 +209,6 @@ namespace testMVVM.ViewModels
 
             CloseApplicationCommand = new RelatedCommand(OnCloseApplicationCommandExecuted, CanCloseApplicationCommandExecute);
             ChangeSelectedIndexCommand = new RelatedCommand(OnChangeSelectedIndexCommandExecuted, CanChangeSelectedIndexCommandExecute);
-//            CreateGroupCommand = new RelatedCommand(OnCreateGroupCommandExecuted, CanCreateGroupCommandExecute);
- //           DeleteGroupCommand = new RelatedCommand(OnDeleteGroupCommandExecuted, CanDeleteGroupCommandExecute);
 
             #endregion
 
@@ -217,8 +223,6 @@ namespace testMVVM.ViewModels
             }
 
             TestDataPoints = data_points;
-
-            int student_index = 0;
 
             List<Catch> catch_report = new List<Catch>();
 
@@ -264,8 +268,13 @@ namespace testMVVM.ViewModels
                     });
                 }
             }
-
+            
+            
             ProductData = product_report;
+           
+            
+
+
             //var groups = Enumerable.Range(1, 20).Select(i => new Group()
             //{
             //    Name = "Группа" + i.ToString(),
@@ -284,7 +293,36 @@ namespace testMVVM.ViewModels
 
 
             CompositeCollection = data_list.ToArray();
-            
+
+            //using var watcher = new FileSystemWatcher(@"C:\");
+
+            //watcher.NotifyFilter = NotifyFilters.Attributes
+            //                     | NotifyFilters.CreationTime
+            //                     | NotifyFilters.DirectoryName
+            //                     | NotifyFilters.FileName
+            //                     | NotifyFilters.LastAccess
+            //                     | NotifyFilters.LastWrite
+            //                     | NotifyFilters.Security
+            //                     | NotifyFilters.Size;
+
+        }
+        private List<Reference> GetReference(string path)
+        {
+            List<Reference> reference = new List<Reference>();
+            using(StreamReader reader = new StreamReader(path))
+            {
+                reader.ReadLine();
+                while (!reader.EndOfStream)
+                {
+                    string[] row = reader.ReadLine().Split(',');
+                    reference.Add(new Reference
+                    {
+                        Id = Convert.ToInt32(row[0]),
+                        Name = row[1]
+                    });
+                }
+            }
+            return reference;
         }
     }
 }

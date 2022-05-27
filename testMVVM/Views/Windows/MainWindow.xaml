@@ -60,12 +60,28 @@
         </StatusBar>
         <Grid Width="Auto">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="10*" MinWidth="150" MaxWidth="500"/>
+                <ColumnDefinition Width="15*" MinWidth="150" MaxWidth="500"/>
                 <ColumnDefinition Width="70*"/>
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0">
+            <StackPanel Grid.Column="0" Orientation="Vertical">
                 <Label Content="Путь к базе вылова"></Label>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" Margin="3"></TextBox>
+                    <Button Grid.Column="1" Content="Обзор" Width="80" Margin="3"></Button>
+                </Grid>   
                 <Label Content="Путь к базе переработки"></Label>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" Margin="3"></TextBox>
+                    <Button Grid.Column="1" Content="Обзор" Width="80" Margin="3"></Button>
+                </Grid>   
             </StackPanel>
             <TabControl Width= "Auto" Grid.Column ="1" HorizontalAlignment="Stretch" SelectedIndex="{Binding SelectedPageIndex}" >
                 <TabItem MaxWidth="1000">
@@ -93,7 +109,7 @@
                             <ListBox ItemsSource="{Binding CompositeCollection}" SelectedItem="{Binding SelectedCompositeValue}">
                             </ListBox>-->
                         <GroupBox Grid.Column="0" Header="База Вылова">
-                            <DataGrid ItemsSource="{Binding CatchData}"></DataGrid> 
+                            <DataGrid ItemsSource="{Binding CatchData}" IsReadOnly="True"></DataGrid> 
                         </GroupBox>
                         <GroupBox Grid.Column="1" Header="База переработки">
                             <!--<GroupBox.Resources>
