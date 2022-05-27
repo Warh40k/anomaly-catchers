@@ -22,15 +22,15 @@ namespace testMVVM.ViewModels
 
         #region Путь к базе данных №1
 
-        private string _Db1Path;
-        public string Db1Path { get => _Db1Path; set => Set(ref _Db1Path, value); }
+        private object _Db1Path;
+        public object Db1Path { get => _Db1Path; set => Set(ref _Db1Path, value); }
 
         #endregion
 
         #region Путь к базе данных №1
 
-        private string _Db2Path;
-        public string Db2Path { get => _Db2Path; set => Set(ref _Db2Path, value); }
+        private object _Db2Path;
+        public object Db2Path { get => _Db2Path; set => Set(ref _Db2Path, value); }
 
         #endregion
 
@@ -178,18 +178,19 @@ namespace testMVVM.ViewModels
         }
 
         #endregion
-
+        
         #region ConfirmPathCommand
+        public ICommand ImportConfirmCommand{ get; }
 
-        public ICommand ConfirmPathCommand { get; }
-
-        private bool CanConfirmPathCommandExecute(object p) => true;
-
-        private void OnConfirmPathCommandExecuted(object p)
+        private bool CanImportConfirmCommandExecute(object p) => true;
+        private void OnImportConfirmCommandExecuted(object p)
         {
-
+            Import();
         }
-        //#region CreateGroupCommand
+
+        #endregion
+
+              //#region CreateGroupCommand
 
         //public ICommand CreateGroupCommand { get; }
 
@@ -233,6 +234,8 @@ namespace testMVVM.ViewModels
 
             CloseApplicationCommand = new RelatedCommand(OnCloseApplicationCommandExecuted, CanCloseApplicationCommandExecute);
             ChangeSelectedIndexCommand = new RelatedCommand(OnChangeSelectedIndexCommandExecuted, CanChangeSelectedIndexCommandExecute);
+            ImportConfirmCommand = new RelatedCommand(OnImportConfirmCommandExecuted, CanImportConfirmCommandExecute);
+
 
             #endregion
 
@@ -248,61 +251,31 @@ namespace testMVVM.ViewModels
 
             TestDataPoints = data_points;
 
-            #region Справочники
-            var fish = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\fish.csv");
-            var prod_designate = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\prod_designate.csv");
-            var prod_type = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\prod_type.csv");
-            var region = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\region.csv");
-            var regime = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\regime.csv");
-            #endregion
-
-            List<Catch> catch_report = new List<Catch>();
-
-            using(StreamReader reader = new StreamReader(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\catch.csv"))
-            {
-                reader.ReadLine();
-                while (!reader.EndOfStream)
-                {
-                    string[] catch_row = reader.ReadLine().Split(',');
-                    catch_report.Add(new Catch
-                    {
-                        Id_ves = Convert.ToInt32(catch_row[0]),
-                        Date = Convert.ToDateTime(catch_row[1]),
-                        Id_region = region[catch_row[2]].Trim('"'),
-                        Id_fish = fish[catch_row[3]].Trim('"'),
-                        Catch_volume = Convert.ToDecimal(catch_row[4].Replace('.', ',')),
-                        Id_regime = regime[catch_row[5]].Trim('"'),
-                        Permit = Convert.ToInt32(catch_row[6]),
-                        Id_own = Convert.ToInt32(catch_row[7])
-                    });
-                }
-            }
-
-            CatchData = catch_report;
 
 
-            List<Product> product_report = new List<Product>();
 
-            using(StreamReader reader = new StreamReader(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\product.csv"))
-            {
-                reader.ReadLine();
-                while (!reader.EndOfStream)
-                {
-                    string[] row = reader.ReadLine().Split(',');
-                    var current_product = new Product();
-                    current_product.Id_ves = Convert.ToInt32(row[0]);
-                    current_product.Date = Convert.ToDateTime(row[1]);
-                    current_product.Id_prod_designate = prod_designate[row[2]].Trim('"');
+            //List<Product> product_report = new List<Product>();
 
-                    if (prod_type.ContainsKey(row[3])) current_product.Prod_type = prod_type[row[3]].Trim('"');
-                    current_product.Prod_volume = Convert.ToDecimal(row[4].Replace('.', ','));
-                    current_product.Prod_board_volume = Convert.ToDecimal(row[5].Replace('.', ','));
+            //using(StreamReader reader = new StreamReader(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\product.csv"))
+            //{
+            //    reader.ReadLine();
+            //    while (!reader.EndOfStream)
+            //    {
+            //        string[] row = reader.ReadLine().Split(',');
+            //        var current_product = new Product();
+            //        current_product.Id_ves = Convert.ToInt32(row[0]);
+            //        current_product.Date = Convert.ToDateTime(row[1]);
+            //        current_product.Id_prod_designate = prod_designate[row[2]].Trim('"');
 
-                    product_report.Add(current_product);
-                }
-            }
+            //        if (prod_type.ContainsKey(row[3])) current_product.Prod_type = prod_type[row[3]].Trim('"');
+            //        current_product.Prod_volume = Convert.ToDecimal(row[4].Replace('.', ','));
+            //        current_product.Prod_board_volume = Convert.ToDecimal(row[5].Replace('.', ','));
 
-            ProductData = product_report;
+            //        product_report.Add(current_product);
+            //    }
+            //}
+
+            //ProductData = product_report;
 
            
             
@@ -357,6 +330,64 @@ namespace testMVVM.ViewModels
                 }
             }
             return reference;
+        }
+
+        private void Import()
+        {
+            #region Справочники
+            var fish = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\fish.csv");
+            var prod_designate = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\prod_designate.csv");
+            var prod_type = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\prod_type.csv");
+            var region = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\region.csv");
+            var regime = GetReference(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\ref\regime.csv");
+            #endregion
+
+            List<Catch> catch_report = new List<Catch>();
+
+            using(StreamReader reader = new StreamReader(Db1Path + @"\catch.csv"))
+            {
+                reader.ReadLine();
+                while (!reader.EndOfStream)
+                {
+                    string[] catch_row = reader.ReadLine().Split(',');
+                    catch_report.Add(new Catch
+                    {
+                        Id_ves = Convert.ToInt32(catch_row[0]),
+                        Date = Convert.ToDateTime(catch_row[1]),
+                        Id_region = region[catch_row[2]].Trim('"'),
+                        Id_fish = fish[catch_row[3]].Trim('"'),
+                        Catch_volume = Convert.ToDecimal(catch_row[4].Replace('.', ',')),
+                        Id_regime = regime[catch_row[5]].Trim('"'),
+                        Permit = Convert.ToInt32(catch_row[6]),
+                        Id_own = Convert.ToInt32(catch_row[7])
+                    });
+                }
+            }
+
+            CatchData = catch_report;
+
+            List<Product> product_report = new List<Product>();
+
+            using(StreamReader reader = new StreamReader(Db1Path + @"\product.csv"))
+            {
+                reader.ReadLine();
+                while (!reader.EndOfStream)
+                {
+                    string[] row = reader.ReadLine().Split(',');
+                    var current_product = new Product();
+                    current_product.Id_ves = Convert.ToInt32(row[0]);
+                    current_product.Date = Convert.ToDateTime(row[1]);
+                    current_product.Id_prod_designate = prod_designate[row[2]].Trim('"');
+
+                    if (prod_type.ContainsKey(row[3])) current_product.Prod_type = prod_type[row[3]].Trim('"');
+                    current_product.Prod_volume = Convert.ToDecimal(row[4].Replace('.', ','));
+                    current_product.Prod_board_volume = Convert.ToDecimal(row[5].Replace('.', ','));
+
+                    product_report.Add(current_product);
+                }
+            }
+
+            ProductData = product_report;
         }
     }
 }
