@@ -80,7 +80,7 @@
                         <ColumnDefinition Width="2*"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="db2_textbox" Grid.Column="0" Margin="3" Text="{Binding Db2Path}"></TextBox>
+                    <TextBox x:Name="db2_textbox" Grid.Column="0" Margin="3" Text="{Binding Db2Path, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                     <Button Grid.Column="1" Content="Обзор" Width="80" Margin="3" Click="Button_Click_1"/>
                 </Grid>
                 <Button Width="120" Margin="10" Content="Подтвердить" Command="{Binding ImportConfirmCommand}" Cursor="Hand"></Button>
@@ -136,7 +136,7 @@
                             </TabItem> 
                             <TabItem HorizontalAlignment="Left" Header="Ext">
                                 <GroupBox Grid.Column="1" Header="База Вылова" Grid.ColumnSpan="2">
-                                    <DataGrid EnableRowVirtualization="True" ItemsSource="{Binding CatchData}" IsReadOnly="True"></DataGrid>
+                                    <DataGrid EnableRowVirtualization="True" ItemsSource="{Binding ExtData}" IsReadOnly="True"></DataGrid>
                                 </GroupBox>
                             </TabItem> 
                             <TabItem HorizontalAlignment="Left" Header="Ext2"></TabItem> 

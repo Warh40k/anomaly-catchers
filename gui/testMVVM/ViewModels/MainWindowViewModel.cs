@@ -27,6 +27,18 @@ namespace testMVVM.ViewModels
 
         #endregion
 
+        #region
+
+        private List<Ext> _ExtData;
+
+        public List<Ext> ExtData
+        {
+            get => _ExtData;
+            set => Set(ref _ExtData, value);
+        }
+
+        #endregion
+
         #region Путь к базе данных №2
 
         private object _Db2Path;
@@ -394,6 +406,33 @@ namespace testMVVM.ViewModels
                 }
 
                 ProductData = product_report;
+
+                
+                List<Ext> ext_report = new List<Ext>();
+
+                using(StreamReader reader = new StreamReader(Db2Path + @"\Ext.csv"))
+                {
+                    reader.ReadLine();
+                    while (!reader.EndOfStream)
+                    {
+                        string[] row = reader.ReadLine().Split(',');
+                        var current_product = new Ext();
+                        current_product.Id_fishery = Convert.ToInt32(row[0]);
+                        current_product.Id_own= Convert.ToInt32(row[1]);
+                        current_product.Date_fishery = Convert.ToDateTime(row[2].Trim('"'));
+
+                        current_product.Num_part = Convert.ToInt32(row[3]); //проверить здесь
+                        current_product.Id_Plat = Convert.ToInt32(row[4]);
+                        current_product.Id_vsd = Convert.ToInt32(row[5]);
+                        current_product.Name_plat = row[6];
+                        current_product.Product_period = Convert.ToDateTime(row[7]);
+                        current_product.Region_plat = row[8];
+
+                        ext_report.Add(current_product);
+                    }
+                }
+
+                ExtData = ext_report;
             }
             catch(IOException ex)
             {
