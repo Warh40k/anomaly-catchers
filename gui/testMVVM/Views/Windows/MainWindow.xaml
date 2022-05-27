@@ -64,24 +64,26 @@
                 <ColumnDefinition Width="70*"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Vertical">
-                <Label Content="Путь к базе вылова"></Label>
+                <Label Content="Путь к первой базе №1"></Label>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20*"/>
+                        <ColumnDefinition Width="133*"/>
+                        <ColumnDefinition Width="76*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="db1_textbox" Grid.Column="0" Margin="3,3,3,3" Grid.ColumnSpan="2"></TextBox>
+                    <Button Grid.Column="2" Content="Обзор" Width="80" Margin="3,3,-7,3" Click="Button_Click"></Button>
+                </Grid>
+                <Label Content="Путь к базе №2"></Label>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox Grid.Column="0" Margin="3"></TextBox>
-                    <Button Grid.Column="1" Content="Обзор" Width="80" Margin="3"></Button>
-                </Grid>   
-                <Label Content="Путь к базе переработки"></Label>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="1*"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBox Grid.Column="0" Margin="3"></TextBox>
-                    <Button Grid.Column="1" Content="Обзор" Width="80" Margin="3"></Button>
-                </Grid>   
+                    <TextBox x:Name="db2_textbox" Grid.Column="0" Margin="3"></TextBox>
+                    <Button Grid.Column="1" Content="Обзор" Width="80" Margin="3" Click="Button_Click_1"/>
+                </Grid>
+                <Button Width="120" Margin="10">Подтвердить</Button>
             </StackPanel>
             <TabControl Width= "Auto" Grid.Column ="1" HorizontalAlignment="Stretch" SelectedIndex="{Binding SelectedPageIndex}" >
                 <TabItem MaxWidth="1000">
@@ -109,7 +111,7 @@
                             <ListBox ItemsSource="{Binding CompositeCollection}" SelectedItem="{Binding SelectedCompositeValue}">
                             </ListBox>-->
                         <GroupBox Grid.Column="0" Header="База Вылова">
-                            <DataGrid ItemsSource="{Binding CatchData}" IsReadOnly="True"></DataGrid> 
+                            <DataGrid ItemsSource="{Binding CatchData}" IsReadOnly="True"></DataGrid>
                         </GroupBox>
                         <GroupBox Grid.Column="1" Header="База переработки">
                             <!--<GroupBox.Resources>
