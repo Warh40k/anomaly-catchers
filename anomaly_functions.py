@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 from tqdm import tqdm
-def repeat_anomaly(ext2, txt_file='delay_report_anomaly.txt', hours_delay=1):
+def repeat_anomaly(ext2, txt_file='repeat_report_anomaly.txt', hours_delay=1):
     anomaly_count = 0
     anomaly_dict = {'violation':[], 'mistake':[]}
     tmp = ext2[ext2.volume > 0].sort_values(by='volume')
@@ -22,6 +22,7 @@ def repeat_anomaly(ext2, txt_file='delay_report_anomaly.txt', hours_delay=1):
 
     # Человекочитаемый вид
     with open(txt_file, 'w', encoding='utf8') as f:
+        print('Отчёт об аномалиях repeat_report\n')
         print(f'Выявлено {anomaly_count} аномалий\n', file=f)
         print(f'Задержки в пределах допустимого:\n', file=f)
         for line in anomaly_dict['mistake']:

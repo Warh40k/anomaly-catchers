@@ -1,10 +1,12 @@
 import pandas as pd
 from duplicate_functions import drop_dup_ext2, drop_dup_ext1
 from anomaly_functions import repeat_anomaly
+from sys import argv
 import json
 
 # здесь импортируем данные, на которых хотим проверить аномалии
 # 100 000 строк ext2 обрабатываются примерно 2 минуты (не стоит кидать всю выборку)
+null, path_to_db, date_from, date_to = argv
 ext2 = pd.read_csv('Датасет\\db2\\Ext2.csv')
 ext1 = pd.read_csv('Датасет\\db2\\Ext.csv')
 catch = pd.read_csv('Датасет\\db1\\catch.csv') 
@@ -35,7 +37,7 @@ anomaly_dict = {'repeat_report': {'visualisation':None, 'anomaly_anount':0}}
 
 # поиск аномалии ошибки в единицах измерения и отправке повторного отчета
 # нужен данные, подобный ext2
-json_file='delay_report_anomaly.json'
+json_file='anomaly.json'
 repeat_report, anomaly_amount = repeat_anomaly(samp_2) 
 
 anomaly_dict['repeat_report']['visualisation'] = repeat_report
