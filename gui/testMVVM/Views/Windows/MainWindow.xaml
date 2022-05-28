@@ -182,55 +182,21 @@
                 <TabItem MaxWidth="1000">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal">
-                            <fa5:SvgAwesome Icon="Solid_ProjectDiagram" Height="13" Margin="0,0,5,0"/>
-                            <TextBlock Text="Диграммы"></TextBlock>
+                            <fa5:SvgAwesome Icon="Solid_MoneyCheck" Height="13" Margin="0,0,5,0"/>
+                            <TextBlock Text="Поиск аномалий"></TextBlock>
                         </StackPanel>
                     </TabItem.Header>
                     <Grid>
-                        <oxy:Plot>
-                            <oxy:Plot.Series>
-                                <oxy:LineSeries ItemsSource="{Binding TestDataPoints}" DataFieldX="XValue" DataFieldY="YValue"/>
-                            </oxy:Plot.Series>
-                            <oxy:Plot.Axes>
-                                <oxy:LinearAxis Position="Left" Maximum="1"/>
-                                <oxy:LinearAxis Position="Bottom"/>
-                            </oxy:Plot.Axes>
-                        </oxy:Plot>
-                    </Grid>
-                </TabItem>
-                <TabItem MaxWidth="1000">
-                    <TabItem.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <fa5:SvgAwesome Icon="Solid_MoneyCheck" Height="13" Margin="0,0,5,0"/>
-                            <TextBlock Text="Результирующие данные"></TextBlock>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10*"/>
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+                        <ContentControl Grid.Row="0" Content="{Binding HumanReport}"></ContentControl>
+                        <StackPanel Grid.Row="1">
+                            <ComboBox VerticalAlignment="Bottom" HorizontalAlignment="Center" MinWidth="300" SelectedItem="{Binding SelectedAnomaly}" ItemsSource="{Binding AnomalyList}"/>
+                            <Button Content="Поиск" Width="120"></Button>
                         </StackPanel>
-                    </TabItem.Header>
-                    <TabControl TabStripPlacement="Bottom" Margin="0,0,0,0" HorizontalContentAlignment="Left" FontSize="14">
-                        <TabItem HorizontalAlignment="Left" Header="Несоответствие единиц измерения">
-                            <GroupBox Grid.Column="1" Header="База Вылова" Grid.ColumnSpan="2">
-                                <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
-                                    <TextBlock FontSize="15" Text = "{Binding HumanReport}"/>
-                                </ScrollViewer>
-                            </GroupBox>
-                        </TabItem>
-                        <TabItem HorizontalAlignment="Left" Header="Аномалия 2">
-                            <GroupBox Grid.Column="1" Header="База переработки" Grid.ColumnSpan="2">
-                                <DataGrid AutoGenerateColumns="False" EnableRowVirtualization="True" ItemsSource="{Binding MachineReport}" IsReadOnly="True">
-                                    <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Код записи"/>
-                                        <DataGridTextColumn Header="Дата записи"/>
-                                        <DataGridTextColumn Header="Объем добычи"/>
-                                        <DataGridTextColumn Header="Единицы измерения"/>
-                                    </DataGrid.Columns>
-                                </DataGrid>
-                            </GroupBox>
-                        </TabItem>
-                        <TabItem HorizontalAlignment="Left" Header="Аномалия 3">
-                            <GroupBox Grid.Column="1" Header="" Grid.ColumnSpan="2">
-                                <DataGrid EnableRowVirtualization="True" ItemsSource="{Binding ExtData}" IsReadOnly="True"></DataGrid>
-                            </GroupBox>
-                        </TabItem>
-                    </TabControl>
+                    </Grid>
                 </TabItem>
             </TabControl>
             <GridSplitter Grid.Column="1" HorizontalAlignment="Left" Width="4"/>

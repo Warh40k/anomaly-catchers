@@ -21,6 +21,11 @@ namespace testMVVM.Models.Test
             Dangerous,
             Critical
         }
+        public override string ToString()
+        {
+            return Name;
+        }
+
 
     }
 }

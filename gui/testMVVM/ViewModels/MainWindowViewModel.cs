@@ -126,8 +126,8 @@ namespace testMVVM.ViewModels
 
         #region Выбранный поиск аномалии
 
-        private Anomaly _SelectedAnomalyTab;
-        public Anomaly SelectedAnomalyTab { get => _SelectedAnomalyTab; set => Set(ref _SelectedAnomalyTab, value); }
+        private Anomaly _SelectedAnomaly;
+        public Anomaly SelectedAnomalyTab { get => _SelectedAnomaly; set => Set(ref _SelectedAnomaly, value); }
 
         #endregion
 
