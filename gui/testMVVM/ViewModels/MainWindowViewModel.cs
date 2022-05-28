@@ -412,34 +412,58 @@ namespace testMVVM.ViewModels
 
                 ProductData = product_report;
 
-                
-                //List<Ext> ext_report = new List<Ext>();
 
-                //using(StreamReader reader = new StreamReader(Db2Path + @"\Ext.csv"))
-                //{
-                //    reader.ReadLine();
-                //    while (!reader.EndOfStream)
-                //    {
-                //        string[] row = reader.ReadLine().Split(',');
-                //        var current_product = new Ext();
-                //        current_product.Id_fishery = Convert.ToInt32(row[0]);
-                //        current_product.Id_own= Convert.ToInt32(row[1]);
-                //        current_product.Date_fishery = Convert.ToDateTime(row[2].Trim('"'));
+                List<Ext> ext_report = new List<Ext>();
 
-                //        current_product.Num_part = Convert.ToInt32(row[3]); //проверить здесь
-                //        current_product.Id_Plat = Convert.ToInt32(row[4]);
-                //        current_product.Id_vsd = Convert.ToInt32(row[5]);
-                //        current_product.Name_plat = row[6];
-                //        current_product.Product_period = Convert.ToDateTime(row[7]);
-                //        current_product.Region_plat = row[8];
+                using (StreamReader reader = new StreamReader(Db2Path + @"\Ext.csv"))
+                {
+                    reader.ReadLine();
 
-                //        ext_report.Add(current_product);
-                //    }
-                //}
+                    while (!reader.EndOfStream)
+                    {
+                        var row = await reader.ReadLineAsync();
+                        string[] row_arr = row.Split(',');
+                        var current_product = new Ext();
+                        //current_product.Id_fishery = Convert.ToInt32(row[0]);
+                        //current_product.Id_own = Convert.ToInt32(row[1]);
+                        //current_product.Date_fishery = Convert.ToDateTime(row[2].Trim('"'));
 
-                //ExtData = ext_report;
+                        //current_product.Num_part = Convert.ToInt32(row[3]); //проверить здесь
+                        //current_product.Id_Plat = Convert.ToInt32(row[4]);
+                        //current_product.Id_vsd = Convert.ToInt32(row[5]);
+                        //current_product.Name_plat = row[6];
+                        //current_product.Product_period = Convert.ToDateTime(row[7]);
+                        //current_product.Region_plat = row[8];
+                        int id_fishery, id_own, num_part, id_plat, id_vsd;
+                        DateTime product_period, date_fishery;
+
+                        int.TryParse(row_arr[0], out id_fishery);
+                        int.TryParse(row_arr[1], out id_own);
+                        DateTime.TryParse(row_arr[2], out date_fishery);
+                        int.TryParse(row_arr[3], out num_part);
+                        int.TryParse(row_arr[4], out id_plat);
+                        int.TryParse(row_arr[5], out id_vsd);
+                        DateTime.TryParse(row_arr[7], out product_period);
+
+                        ext_report.Add(new Ext
+                        {
+                            Id_fishery = id_fishery,
+                            Id_own = id_own,
+                            Date_fishery = date_fishery,
+                            Num_part = num_part,
+                            Id_Plat = id_plat,
+                            Id_vsd = id_vsd,
+                            Name_plat = row_arr[6],
+                            Product_period = product_period,
+                            Region_plat = row_arr[8]
+                        });
+                        
+                    }
+                }
+
+                ExtData = ext_report;
             }
-            catch(IOException ex)
+            catch (IOException ex)
             {
                 MessageBox.Show(ex.Message);
             }
