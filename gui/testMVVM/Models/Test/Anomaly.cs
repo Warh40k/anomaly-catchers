@@ -9,6 +9,7 @@ namespace testMVVM.Models.Test
     internal class Anomaly
     {
         public int Id { get; set; }
+        public string Name { get; set; }
         public string Description { get; set; }
 
         public Status Priority{ get; set; }

@@ -130,6 +130,7 @@
     <Compile Include="Models\Test\Anomaly.cs" />
     <Compile Include="Models\Test\Catch.cs" />
     <Compile Include="Models\Test\Ext.cs" />
+    <Compile Include="Models\Test\Ext2.cs" />
     <Compile Include="Models\Test\Notification.cs" />
     <Compile Include="Models\Test\Product.cs" />
     <Compile Include="Models\Test\Reference.cs" />
@@ -164,7 +165,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Views\Windows\resources\logo.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.4.5.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.4.5.0\build\MaterialDesignThemes.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

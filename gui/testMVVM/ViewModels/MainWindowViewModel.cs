@@ -18,10 +18,18 @@ namespace testMVVM.ViewModels
 {
     internal class MainWindowViewModel : ViewModel
     {
+        #region Данные таблицы Ext2
 
+        private List<Ext2> _Ext2Data;
+        public List<Ext2> Ext2Data 
+        {
+            get => _Ext2Data; set => Set(ref _Ext2Data, value);
+        }
 
-        #region Список найденных аномалий
+        #endregion
         
+        #region Список найденных аномалий
+
         private List<Anomaly> _AnomalyList;
 
         public List<Anomaly> AnomalyList
@@ -251,9 +259,9 @@ namespace testMVVM.ViewModels
 
             AnomalyList = new List<Anomaly>
             {
-                new Anomaly {Id = 1, Description = "Серьезная аномаль", Priority = Anomaly.Status.Dangerous},
-                new Anomaly {Id = 2, Description = "Не страшно", Priority = Anomaly.Status.Minor},
-                new Anomaly {Id = 3, Description = "Не очень", Priority = Anomaly.Status.Middle}
+                new Anomaly {Id = 1, Name = "Отсутствие или искажение обязательной информации в ССД", Description = "", Priority = Anomaly.Status.Dangerous},
+                new Anomaly {Id = 2, Name = "Несоответствие данных привоза продукции и переработки", Description = "Не страшно", Priority = Anomaly.Status.Minor},
+                new Anomaly {Id = 3, Name = "Серьезное нарушение соответствия данных между ССД и данными системы “Меркурий”", Description = "Не очень", Priority = Anomaly.Status.Middle}
             };
             var data_points = new List<DataPoint>((int)(360 / 0.1));
 
@@ -332,7 +340,7 @@ namespace testMVVM.ViewModels
             {
                 var fish_task = await GetReference(Db1Path + @"\ref\fish.csv");
 
-                var fish = await GetReference(Db1Path + @"\ref\fish.csv");
+                var fishref = await GetReference(Db1Path + @"\ref\fish.csv");
                 var prod_designate = await GetReference(Db1Path + @"\ref\prod_designate.csv");
                 var prod_type = await GetReference(Db1Path + @"\ref\prod_type.csv");
                 var region = await GetReference(Db1Path + @"\ref\region.csv");
@@ -355,7 +363,7 @@ namespace testMVVM.ViewModels
                             Id_ves = int.Parse(catch_arr[0]),
                             Date = DateTime.Parse(catch_arr[1]),
                             Id_region = region[catch_arr[2]].Trim('"'),
-                            Id_fish = fish[catch_arr[3]].Trim('"'),
+                            Id_fish = fishref[catch_arr[3]].Trim('"'),
                             Catch_volume = decimal.Parse(catch_arr[4].Replace('.', ',')),
                             Id_regime = regime[catch_arr[5]].Trim('"'),
                             Permit = int.Parse(catch_arr[6]),
@@ -402,16 +410,6 @@ namespace testMVVM.ViewModels
                         var row = await reader.ReadLineAsync();
                         string[] row_arr = row.Split(',');
                         var current_product = new Ext();
-                        //current_product.Id_fishery = Convert.ToInt32(row[0]);
-                        //current_product.Id_own = Convert.ToInt32(row[1]);
-                        //current_product.Date_fishery = Convert.ToDateTime(row[2].Trim('"'));
-
-                        //current_product.Num_part = Convert.ToInt32(row[3]); //проверить здесь
-                        //current_product.Id_Plat = Convert.ToInt32(row[4]);
-                        //current_product.Id_vsd = Convert.ToInt32(row[5]);
-                        //current_product.Name_plat = row[6];
-                        //current_product.Product_period = Convert.ToDateTime(row[7]);
-                        //current_product.Region_plat = row[8];
                         int id_fishery, id_own, num_part, id_plat, id_vsd;
                         DateTime product_period, date_fishery;
 
@@ -440,10 +438,49 @@ namespace testMVVM.ViewModels
                 }
 
                 ExtData = ext_report;
+
+                List<Ext2> ext2_report = new List<Ext2>();
+
+                using (StreamReader reader = new StreamReader(Db2Path + @"\Ext2.csv"))
+                {
+                    reader.ReadLine();
+
+                    while (!reader.EndOfStream)
+                    {
+                        var row = await reader.ReadLineAsync();
+                        string[] row_arr = row.Split(',');
+                        var current_product = new Ext2();
+                        int id_vsd, num_vsd, id_fish;
+                        DateTime date_vsd;
+                        decimal volume;
+                        string fish, unit;
+
+
+                        int.TryParse(row_arr[0], out id_vsd);
+                        int.TryParse(row_arr[1], out num_vsd);
+                        int.TryParse(row_arr[2], out id_fish);
+                        fish = row_arr[3];
+                        DateTime.TryParse(row_arr[4], out date_vsd);
+                        decimal.TryParse(row_arr[5], out volume);
+                        unit = row_arr[6];
+
+                        ext2_report.Add(new Ext2
+                        {
+                            Id_vsd = id_vsd,
+                            Num_vsd = num_vsd,
+                            Id_fish = id_fish,
+                            Date_vsd = date_vsd,
+                            Volume = volume,
+                            Unit = unit
+                        });
+                    }
+                }
+
+                Ext2Data = ext2_report;
             }
             catch (IOException ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "Нет файла", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
         }
