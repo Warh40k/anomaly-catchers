@@ -76,7 +76,7 @@
                         <ColumnDefinition Width="31*"/>
                         <ColumnDefinition Width="20*"/>
                     </Grid.ColumnDefinitions>
-                    <DatePicker Grid.Column="0" Margin="3,3,3,3" Text="{Binding DataFrom, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2"></DatePicker>
+                    <DatePicker Grid.Column="0" Margin="3,3,3,3" SelectedDate="{Binding DateFrom, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2"></DatePicker>
                 </Grid>
                 <Label Content="Дата конца периода"></Label>
                 <Grid>
@@ -85,7 +85,7 @@
                         <ColumnDefinition Width="31*"/>
                         <ColumnDefinition Width="20*"/>
                     </Grid.ColumnDefinitions>
-                    <DatePicker Grid.Column="0" Margin="3,3,3,3" Text="{Binding DataTo, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2"></DatePicker>
+                    <DatePicker Grid.Column="0" Margin="3,3,3,3" SelectedDate="{Binding DateTo, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2"></DatePicker>
                 </Grid>
                 <Button Width="150" Margin="10" Content="Поиск аномалий" Command="{Binding SearchAnomalyCommand}" Cursor="Hand"></Button>
                 <Button Width="150" Content="Показать базы" Command="{Binding ImportConfirmCommand}" Cursor="Hand"/>

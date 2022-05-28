@@ -61,10 +61,24 @@ namespace testMVVM.ViewModels
 
         public object[] CompositeCollection { get; }
 
-        #region Путь к базе данных №1
+        #region Путь к базе данных
 
         private object _DbPath;
         public object DbPath { get => _DbPath; set => Set(ref _DbPath, value); }
+
+        #endregion
+
+        #region Дата начала периода
+
+        private DateTime _DateFrom = DateTime.Today;
+        public DateTime DateFrom { get => _DateFrom; set => Set(ref _DateFrom, value); }
+
+        #endregion
+
+        #region Дата конца периода
+
+        private DateTime _DateTo = DateTime.Now;
+        public DateTime DateTo { get => _DateTo; set => Set(ref _DateTo, value); }
 
         #endregion
 
@@ -77,13 +91,6 @@ namespace testMVVM.ViewModels
             get => _ExtData;
             set => Set(ref _ExtData, value);
         }
-
-        #endregion
-
-        #region Путь к базе данных №2
-
-        private object _Db2Path;
-        public object Db2Path { get => _Db2Path; set => Set(ref _Db2Path, value); }
 
         #endregion
 
@@ -220,25 +227,32 @@ namespace testMVVM.ViewModels
         private bool CanSearchAnomalyCommandExecute(object p) => true;
         private void OnSearchAnomalyCommandExecuted(object p)
         {
-            string exepath = "data\\model.exe";
-            System.Diagnostics.Process.Start(exepath, $"\"{DbPath}\" \"{Db2Path}\"");
-            string json = File.ReadAllText(@"data\result.json");
-            JObject result_object = JObject.Parse(json);
-            JArray result_array = (JArray)result_object["anomaly_list"];
-            List<Notification> notify_list = new List<Notification>();
-
-            for(int i=0; i< result_array.Count; i++)
+            try
             {
-                JObject item = (JObject)result_array[i];
-                Anomaly anomaly = AnomalyList[(int)item["id"]];
-                notify_list.Add(new Notification
-                {
-                    Date = DateTime.Now,
-                    Anomaly = anomaly
-                });   
-            }
+                string exepath = "data\\model.exe";
+                System.Diagnostics.Process.Start(exepath, $"\"{DbPath}\" \"{DateFrom}\" \"{DateTo}\"");
+                string json = File.ReadAllText(@"data\result.json");
+                JObject result_object = JObject.Parse(json);
+                JArray result_array = (JArray)result_object["anomaly_list"];
+                List<Notification> notify_list = new List<Notification>();
 
-            NotificationsList = notify_list;
+                for(int i=0; i< result_array.Count; i++)
+                {
+                    JObject item = (JObject)result_array[i];
+                    Anomaly anomaly = AnomalyList[(int)item["id"]];
+                    notify_list.Add(new Notification
+                    {
+                        Date = DateTime.Now,
+                        Anomaly = anomaly
+                    });   
+                }
+
+                NotificationsList = notify_list;
+            }
+            catch (IOException ex)
+            {
+                MessageBox.Show(ex.Message + "\nПопробуйте изменить входные данные", "Ошибка выполнения", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             
         }
 
@@ -402,7 +416,7 @@ namespace testMVVM.ViewModels
 
                 List<Ext> ext_report = new List<Ext>();
 
-                using (StreamReader reader = new StreamReader(Db2Path + @"\Ext.csv"))
+                using (StreamReader reader = new StreamReader(DbPath + @"db2\Ext.csv"))
                 {
                     reader.ReadLine();
 
@@ -442,7 +456,7 @@ namespace testMVVM.ViewModels
 
                 List<Ext2> ext2_report = new List<Ext2>();
 
-                using (StreamReader reader = new StreamReader(Db2Path + @"\Ext2.csv"))
+                using (StreamReader reader = new StreamReader(DbPath + @"db2\Ext2.csv"))
                 {
                     reader.ReadLine();
 
