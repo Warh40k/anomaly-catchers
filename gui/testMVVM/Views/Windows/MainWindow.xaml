@@ -50,7 +50,7 @@
                 <ProgressBar Width="120" Height="14" Value = "80"></ProgressBar>
             </StatusBarItem>
             <StatusBarItem>
-                <TextBlock Text="{Binding TabsCount}"></TextBlock>
+                <TextBlock Text="{Binding SelectedDataBase}"></TextBlock>
             </StatusBarItem>
         </StatusBar>
         <Grid>
@@ -87,7 +87,6 @@
                     </Grid.ColumnDefinitions>
                     <DatePicker Grid.Column="0" Margin="3,3,3,3" SelectedDate="{Binding DateTo, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2"></DatePicker>
                 </Grid>
-                <Button Width="150" Content="Показать базы" Command="{Binding ImportConfirmCommand}" Cursor="Hand"/>
                 <Image Source="resources\logo.jpg" Width="250" Margin="15"></Image>
             </StackPanel>
             <TabControl Width= "Auto" Grid.Column ="1" HorizontalAlignment="Stretch" SelectedIndex="{Binding SelectedPageIndex}" >
@@ -100,7 +99,7 @@
                     </TabItem.Header>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="333*"/>
+                            <ColumnDefinition Width="450*"/>
                             <ColumnDefinition Width="527*"/>
                             <ColumnDefinition Width="140*"/>
                         </Grid.ColumnDefinitions>
@@ -109,6 +108,7 @@
                                 <DataTemplate DataType="{x:Type decanat:Notification}">
                                     <StackPanel Orientation="Vertical">
                                         <TextBlock Text="{Binding Anomaly.Id, StringFormat='Код аномалии: {0} '}"/>
+                                        <TextBlock FontSize="15" Text="{Binding Anomaly.Name, StringFormat='Название: {0} '}"/>
                                         <TextBlock FontSize="15" Text="{Binding Anomaly.Priority, StringFormat='Приоритет: {0} '}"/>
                                     </StackPanel>
                                 </DataTemplate>
@@ -125,7 +125,11 @@
                         </StackPanel>
                     </TabItem.Header>
                     <Grid>
-                        <TabControl TabStripPlacement="Bottom" Margin="0,0,0,0" HorizontalContentAlignment="Left" FontSize="14">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="8*"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <TabControl SelectedValue="{Binding SelectedDatabase, UpdateSourceTrigger=LostFocus}" Grid.Row="0" TabStripPlacement="Bottom" Margin="0,0,0,0" HorizontalContentAlignment="Left" FontSize="14">
                             <TabItem HorizontalAlignment="Left" Header="Переработка">
                                 <GroupBox Grid.Column="1" Header="База Вылова" Grid.ColumnSpan="2">
                                     <DataGrid EnableRowVirtualization="True" ItemsSource="{Binding CatchData}" IsReadOnly="True"></DataGrid>
@@ -145,6 +149,7 @@
                                 <DataGrid EnableRowVirtualization="True" ItemsSource="{Binding Ext2Data}" IsReadOnly="True"/>
                             </TabItem>
                         </TabControl>
+                        <Button Grid.Row="1" Width="150" Content="Показать базы" Command="{Binding ImportConfirmCommand}" Cursor="Hand"/>
                     </Grid>
                 </TabItem>
                 <!--<TabItem MaxWidth="1000">
@@ -191,7 +196,9 @@
                             <RowDefinition Height="10*"/>
                             <RowDefinition Height="2*"/>
                         </Grid.RowDefinitions>
-                        <ContentControl FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0" Content="{Binding HumanReport}"></ContentControl>
+                        <ScrollViewer VerticalScrollBarVisibility ="Visible">
+                            <ContentControl FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Row="0" Padding="30" Content="{Binding HumanReport}"></ContentControl>
+                        </ScrollViewer>
                         <StackPanel Grid.Row="1">
                             <ComboBox VerticalAlignment="Bottom" HorizontalAlignment="Center" MinWidth="300" SelectedItem="{Binding SelectedAnomaly}" ItemsSource="{Binding AnomalyList}"/>
                             <Button Content="Поиск" Command="{Binding SearchAnomalyCommand}" Width="120"></Button>

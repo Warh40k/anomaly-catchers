@@ -18,8 +18,7 @@ namespace testMVVM.Models.Test
         {
             Minor,
             Middle,
-            Dangerous,
-            Critical
+            High
         }
         public override string ToString()
         {

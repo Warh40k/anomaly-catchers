@@ -245,8 +245,15 @@ namespace testMVVM.ViewModels
         private bool CanImportConfirmCommandExecute(object p) => true;
         private void OnImportConfirmCommandExecuted(object p)
         {
-            Import();
+            ImportDB();
         }
+
+        #endregion
+
+        #region Выбранная база данных
+
+        private int _SelectedDataBase;
+        public int SelectedDataBase { get => _SelectedDataBase; set => Set(ref _SelectedDataBase, value); }
 
         #endregion
 
@@ -267,19 +274,25 @@ namespace testMVVM.ViewModels
 
                 string text = File.ReadAllText("delay_report_anomaly.txt");
                 string first_line = text.Substring(0, text.IndexOf('\r'));
-                if (!first_line.Contains('0'))
+                if (!first_line.Contains("Выявлено 0"))
+                {
                     notify_list.Add(new Notification
                     {
                         Date = DateTime.Now,
                         Anomaly = SelectedAnomaly,
                         Name = SelectedAnomaly.Name + "\n" + first_line
                     });
+
+
+                }
                 HumanReport = text;
-                
+
                 NotificationsList = notify_list;
 
+
+
             }
-            catch (IOException ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message + "\nПопробуйте изменить входные данные", "Ошибка выполнения", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -304,7 +317,7 @@ namespace testMVVM.ViewModels
 
             AnomalyList = new List<Anomaly>
             {
-                new Anomaly {Id = 1, Name = "Отсутствие или искажение обязательной информации в ССД", Description = "Так себе", Priority = Anomaly.Status.Dangerous},
+                new Anomaly {Id = 1, Name = "Отсутствие или искажение обязательной информации в ССД", Description = "", Priority = Anomaly.Status.Middle},
                 new Anomaly {Id = 2, Name = "Несоответствие данных привоза продукции и переработки", Description = "Не очень", Priority = Anomaly.Status.Minor},
                 new Anomaly {Id = 3, Name = "Серьезное нарушение соответствия данных между ССД и данными системы “Меркурий”", Description = "Не очень", Priority = Anomaly.Status.Middle}
             };
@@ -377,157 +390,177 @@ namespace testMVVM.ViewModels
             return reference;
         }
 
-        private async void Import()
+        private async void ImportDB()
         {
+
+            DisposeDatabases();
+
             #region Справочники
 
             try
             {
-                var fish_task = await GetReference(DbPath + @"\ref\fish.csv");
+                var fish_task = await GetReference(DbPath + @"\db1\ref\fish.csv");
 
-                var fishref = await GetReference(DbPath + @"\ref\fish.csv");
-                var prod_designate = await GetReference(DbPath + @"\ref\prod_designate.csv");
-                var prod_type = await GetReference(DbPath + @"\ref\prod_type.csv");
-                var region = await GetReference(DbPath + @"\ref\region.csv");
-                var regime = await GetReference(DbPath + @"\ref\regime.csv");
+                var fishref = await GetReference(DbPath + @"\db1\ref\fish.csv");
+                var prod_designate = await GetReference(DbPath + @"\db1\ref\prod_designate.csv");
+                var prod_type = await GetReference(DbPath + @"\db1\ref\prod_type.csv");
+                var region = await GetReference(DbPath + @"\db1\ref\region.csv");
+                var regime = await GetReference(DbPath + @"\db1\ref\regime.csv");
 
                 #endregion
-
-                List<Catch> catch_report = new List<Catch>();
-
-                using(StreamReader reader = new StreamReader(DbPath + @"\catch.csv"))
+                
+                if(SelectedDataBase == 0 )
                 {
-                    reader.ReadLine();
-                    while (!reader.EndOfStream)
-                    {
-                        var catch_row = await reader.ReadLineAsync();
-                        var catch_arr = catch_row.Split(',');
 
-                        catch_report.Add(new Catch
+                    List<Catch> catch_report = new List<Catch>();
+
+                    using(StreamReader reader = new StreamReader(DbPath + @"\db1\catch.csv"))
+                    {
+                        reader.ReadLine();
+                        while (!reader.EndOfStream)
                         {
-                            Id_ves = int.Parse(catch_arr[0]),
-                            Date = DateTime.Parse(catch_arr[1]),
-                            Id_region = region[catch_arr[2]].Trim('"'),
-                            Id_fish = fishref[catch_arr[3]].Trim('"'),
-                            Catch_volume = decimal.Parse(catch_arr[4].Replace('.', ',')),
-                            Id_regime = regime[catch_arr[5]].Trim('"'),
-                            Permit = int.Parse(catch_arr[6]),
-                            Id_own = int.Parse(catch_arr[7])
-                        });
+                            var catch_row = await reader.ReadLineAsync();
+                            var catch_arr = catch_row.Split(',');
+
+                            catch_report.Add(new Catch
+                            {
+                                Id_ves = int.Parse(catch_arr[0]),
+                                Date = DateTime.Parse(catch_arr[1]),
+                                Id_region = region[catch_arr[2]].Trim('"'),
+                                Id_fish = fishref[catch_arr[3]].Trim('"'),
+                                Catch_volume = decimal.Parse(catch_arr[4].Replace('.', ',')),
+                                Id_regime = regime[catch_arr[5]].Trim('"'),
+                                Permit = int.Parse(catch_arr[6]),
+                                Id_own = int.Parse(catch_arr[7])
+                            });
+                        }
                     }
+
+                   CatchData = catch_report;
+
                 }
-
-               CatchData = catch_report;
-
-                List<Product> product_report = new List<Product>();
-
-                using(StreamReader reader = new StreamReader(DbPath + @"\product.csv"))
+                else if(SelectedDataBase == 1)
                 {
-                    reader.ReadLine();
-                    while (!reader.EndOfStream)
+                    List<Product> product_report = new List<Product>();
+
+                    using(StreamReader reader = new StreamReader(DbPath + @"\db2\product.csv"))
                     {
-                        var row = await reader.ReadLineAsync();
-                        var row_arr = row.Split(',');
-                        var current_product = new Product();
-                        current_product.Id_ves = int.Parse(row_arr[0]);
-                        current_product.Date = DateTime.Parse(row_arr[1]);
-                        current_product.Id_prod_designate = prod_designate[row_arr[2]].Trim('"');
-
-                        if (prod_type.ContainsKey(row_arr[3])) current_product.Prod_type = prod_type[row_arr[3]].Trim('"');
-                        current_product.Prod_volume = decimal.Parse(row_arr[4].Replace('.', ','));
-                        current_product.Prod_board_volume = decimal.Parse(row_arr[5].Replace('.', ','));
-
-                        product_report.Add(current_product);
-                    }
-                }
-
-                ProductData = product_report;
-
-
-                List<Ext> ext_report = new List<Ext>();
-
-                using (StreamReader reader = new StreamReader(DbPath + @"db2\Ext.csv"))
-                {
-                    reader.ReadLine();
-
-                    while (!reader.EndOfStream)
-                    {
-                        var row = await reader.ReadLineAsync();
-                        string[] row_arr = row.Split(',');
-                        var current_product = new Ext();
-                        int id_fishery, id_own, num_part, id_plat, id_vsd;
-                        DateTime product_period, date_fishery;
-
-                        int.TryParse(row_arr[0], out id_fishery);
-                        int.TryParse(row_arr[1], out id_own);
-                        DateTime.TryParse(row_arr[2], out date_fishery);
-                        int.TryParse(row_arr[3], out num_part);
-                        int.TryParse(row_arr[4], out id_plat);
-                        int.TryParse(row_arr[5], out id_vsd);
-                        DateTime.TryParse(row_arr[7], out product_period);
-
-                        ext_report.Add(new Ext
+                        reader.ReadLine();
+                        while (!reader.EndOfStream)
                         {
-                            Id_fishery = id_fishery,
-                            Id_own = id_own,
-                            Date_fishery = date_fishery,
-                            Num_part = num_part,
-                            Id_Plat = id_plat,
-                            Id_vsd = id_vsd,
-                            Name_plat = row_arr[6],
-                            Product_period = product_period,
-                            Region_plat = row_arr[8]
-                        });
-                        
+                            var row = await reader.ReadLineAsync();
+                            var row_arr = row.Split(',');
+                            var current_product = new Product();
+                            current_product.Id_ves = int.Parse(row_arr[0]);
+                            current_product.Date = DateTime.Parse(row_arr[1]);
+                            current_product.Id_prod_designate = prod_designate[row_arr[2]].Trim('"');
+
+                            if (prod_type.ContainsKey(row_arr[3])) current_product.Prod_type = prod_type[row_arr[3]].Trim('"');
+                            current_product.Prod_volume = decimal.Parse(row_arr[4].Replace('.', ','));
+                            current_product.Prod_board_volume = decimal.Parse(row_arr[5].Replace('.', ','));
+
+                            product_report.Add(current_product);
+                        }
                     }
+
+                    ProductData = product_report;
                 }
-
-                ExtData = ext_report;
-
-                List<Ext2> ext2_report = new List<Ext2>();
-
-                using (StreamReader reader = new StreamReader(DbPath + @"db2\Ext2.csv"))
+                else if(SelectedDataBase == 2)
                 {
-                    reader.ReadLine();
 
-                    while (!reader.EndOfStream)
+                    List<Ext> ext_report = new List<Ext>();
+                    using (StreamReader reader = new StreamReader(DbPath + @"\db2\Ext.csv"))
                     {
-                        var row = await reader.ReadLineAsync();
-                        string[] row_arr = row.Split(',');
-                        var current_product = new Ext2();
-                        int id_vsd, num_vsd, id_fish;
-                        DateTime date_vsd;
-                        decimal volume;
-                        string fish, unit;
+                        reader.ReadLine();
 
-
-                        int.TryParse(row_arr[0], out id_vsd);
-                        int.TryParse(row_arr[1], out num_vsd);
-                        int.TryParse(row_arr[2], out id_fish);
-                        fish = row_arr[3];
-                        DateTime.TryParse(row_arr[4], out date_vsd);
-                        decimal.TryParse(row_arr[5], out volume);
-                        unit = row_arr[6];
-
-                        ext2_report.Add(new Ext2
+                        while (!reader.EndOfStream)
                         {
-                            Id_vsd = id_vsd,
-                            Num_vsd = num_vsd,
-                            Id_fish = id_fish,
-                            Date_vsd = date_vsd,
-                            Volume = volume,
-                            Unit = unit
-                        });
-                    }
-                }
+                            var row = await reader.ReadLineAsync();
+                            string[] row_arr = row.Split(',');
+                            var current_product = new Ext();
+                            int id_fishery, id_own, num_part, id_plat, id_vsd;
+                            DateTime product_period, date_fishery;
 
-                Ext2Data = ext2_report;
+                            int.TryParse(row_arr[0], out id_fishery);
+                            int.TryParse(row_arr[1], out id_own);
+                            DateTime.TryParse(row_arr[2], out date_fishery);
+                            int.TryParse(row_arr[3], out num_part);
+                            int.TryParse(row_arr[4], out id_plat);
+                            int.TryParse(row_arr[5], out id_vsd);
+                            DateTime.TryParse(row_arr[7], out product_period);
+
+                            ext_report.Add(new Ext
+                            {
+                                Id_fishery = id_fishery,
+                                Id_own = id_own,
+                                Date_fishery = date_fishery,
+                                Num_part = num_part,
+                                Id_Plat = id_plat,
+                                Id_vsd = id_vsd,
+                                Name_plat = row_arr[6],
+                                Product_period = product_period,
+                                Region_plat = row_arr[8]
+                            });
+                            
+                        }
+                    }
+
+                    ExtData = ext_report;
+                }
+                else if (SelectedDataBase == 3)
+                {
+                    List<Ext2> ext2_report = new List<Ext2>();
+
+                    using (StreamReader reader = new StreamReader(DbPath + @"\db2\Ext2.csv"))
+                    {
+                        reader.ReadLine();
+
+                        while (!reader.EndOfStream)
+                        {
+                            var row = await reader.ReadLineAsync();
+                            string[] row_arr = row.Split(',');
+                            var current_product = new Ext2();
+                            int id_vsd, num_vsd, id_fish;
+                            DateTime date_vsd;
+                            decimal volume;
+                            string fish, unit;
+
+
+                            int.TryParse(row_arr[0], out id_vsd);
+                            int.TryParse(row_arr[1], out num_vsd);
+                            int.TryParse(row_arr[2], out id_fish);
+                            fish = row_arr[3];
+                            DateTime.TryParse(row_arr[4], out date_vsd);
+                            decimal.TryParse(row_arr[5], out volume);
+                            unit = row_arr[6];
+
+                            ext2_report.Add(new Ext2
+                            {
+                                Id_vsd = id_vsd,
+                                Num_vsd = num_vsd,
+                                Id_fish = id_fish,
+                                Date_vsd = date_vsd,
+                                Volume = volume,
+                                Unit = unit
+                            });
+                        }
+                    }
+
+                    Ext2Data = ext2_report;
+                }
             }
             catch (IOException ex)
             {
                 MessageBox.Show(ex.Message, "Нет файла", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
+        }
+        void DisposeDatabases()
+        {
+            ProductData = null;
+            CatchData = null;
+            ExtData = null;
+            Ext2Data = null;
         }
     }
 }
