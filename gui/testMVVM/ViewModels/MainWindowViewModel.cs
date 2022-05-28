@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -120,6 +121,13 @@ namespace testMVVM.ViewModels
 
         private object _SelectedCompositeValue;
         public object SelectedCompositeValue { get => _SelectedCompositeValue; set => Set(ref _SelectedCompositeValue, value); }
+
+        #endregion
+
+        #region Выбранный поиск аномалии
+
+        private Anomaly _SelectedAnomalyTab;
+        public Anomaly SelectedAnomalyTab { get => _SelectedAnomalyTab; set => Set(ref _SelectedAnomalyTab, value); }
 
         #endregion
 
@@ -253,26 +261,14 @@ namespace testMVVM.ViewModels
             {
                 string exepath = "data\\model.exe";
                 //System.Diagnostics.Process.Start(exepath, $"\"{DbPath}\" \"{DateFrom}\" \"{DateTo}\"").WaitForExit();
-                string json = File.ReadAllText(@"delay_report_anomaly.json");
-                //JObject result_object = JObject.Parse(json);
-                //JArray result_array = (JArray)result_object[""];
-                //List<Notification> notify_list = new List<Notification>();
+                
+                List<Notification> notify_list = new List<Notification>();
 
-                //for(int i=0; i< result_array.Count; i++)
-                //{
-                //    JObject item = (JObject)result_array[i];
-                //    Anomaly anomaly = AnomalyList[(int)item["id"]];
-                //    notify_list.Add(new Notification
-                //    {
-                //        Date = DateTime.Now,
-                //        Anomaly = anomaly
-                //    });   
-                //}
-
-                //NotificationsList = notify_list;
                 string human_readable_report = File.ReadAllText("delay_report_anomaly.txt");
                 HumanReport = human_readable_report;
 
+
+                NotificationsList = notify_list;
 
             }
             catch (IOException ex)

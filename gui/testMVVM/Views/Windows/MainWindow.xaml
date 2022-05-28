@@ -206,19 +206,26 @@
                         </StackPanel>
                     </TabItem.Header>
                     <TabControl TabStripPlacement="Bottom" Margin="0,0,0,0" HorizontalContentAlignment="Left" FontSize="14">
-                        <TabItem HorizontalAlignment="Left" Header="Переработка">
+                        <TabItem HorizontalAlignment="Left" Header="Несоответствие единиц измерения">
                             <GroupBox Grid.Column="1" Header="База Вылова" Grid.ColumnSpan="2">
                                 <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
                                     <TextBlock FontSize="15" Text = "{Binding HumanReport}"/>
                                 </ScrollViewer>
                             </GroupBox>
                         </TabItem>
-                        <TabItem HorizontalAlignment="Left" Header="Вылов">
+                        <TabItem HorizontalAlignment="Left" Header="Аномалия 2">
                             <GroupBox Grid.Column="1" Header="База переработки" Grid.ColumnSpan="2">
-                                <DataGrid EnableRowVirtualization="True" ItemsSource="{Binding MachineReport}" IsReadOnly="True"></DataGrid>
+                                <DataGrid AutoGenerateColumns="False" EnableRowVirtualization="True" ItemsSource="{Binding MachineReport}" IsReadOnly="True">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Код записи"/>
+                                        <DataGridTextColumn Header="Дата записи"/>
+                                        <DataGridTextColumn Header="Объем добычи"/>
+                                        <DataGridTextColumn Header="Единицы измерения"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
                             </GroupBox>
                         </TabItem>
-                        <TabItem HorizontalAlignment="Left" Header="Диаграммы">
+                        <TabItem HorizontalAlignment="Left" Header="Аномалия 3">
                             <GroupBox Grid.Column="1" Header="" Grid.ColumnSpan="2">
                                 <DataGrid EnableRowVirtualization="True" ItemsSource="{Binding ExtData}" IsReadOnly="True"></DataGrid>
                             </GroupBox>
