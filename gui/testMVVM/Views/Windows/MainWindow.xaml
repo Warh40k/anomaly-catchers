@@ -66,17 +66,26 @@
                         <ColumnDefinition Width="133*"/>
                         <ColumnDefinition Width="76*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="db1_textbox" Grid.Column="0" Margin="3,3,3,3" Grid.ColumnSpan="2" Text="{Binding Db1Path, UpdateSourceTrigger=PropertyChanged}" Cursor="Arrow"></TextBox>
+                    <TextBox x:Name="db1_textbox" Grid.Column="0" Margin="3,3,3,3" Grid.ColumnSpan="2" Text="{Binding DbPath, UpdateSourceTrigger=PropertyChanged}" Cursor="Arrow"></TextBox>
                     <Button Grid.Column="2" Content="Обзор" Width="80" Margin="3,3,-7,3" Click="Button_Click"></Button>
                 </Grid>
-                <Label Content="Путь к базе №2"></Label>
+                <Label Content="Дата начала периода"></Label>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="9*"/>
+                        <ColumnDefinition Width="31*"/>
+                        <ColumnDefinition Width="20*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="db2_textbox" Grid.Column="0" Margin="3" Text="{Binding Db2Path, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                    <Button Grid.Column="1" Content="Обзор" Width="80" Margin="3" Click="Button_Click_1"/>
+                    <DatePicker Grid.Column="0" Margin="3,3,3,3" Text="{Binding DataFrom, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2"></DatePicker>
+                </Grid>
+                <Label Content="Дата конца периода"></Label>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="9*"/>
+                        <ColumnDefinition Width="31*"/>
+                        <ColumnDefinition Width="20*"/>
+                    </Grid.ColumnDefinitions>
+                    <DatePicker Grid.Column="0" Margin="3,3,3,3" Text="{Binding DataTo, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2"></DatePicker>
                 </Grid>
                 <Button Width="150" Margin="10" Content="Поиск аномалий" Command="{Binding SearchAnomalyCommand}" Cursor="Hand"></Button>
                 <Button Width="150" Content="Показать базы" Command="{Binding ImportConfirmCommand}" Cursor="Hand"/>
@@ -121,20 +130,20 @@
                                 <GroupBox Grid.Column="1" Header="База Вылова" Grid.ColumnSpan="2">
                                     <DataGrid EnableRowVirtualization="True" ItemsSource="{Binding CatchData}" IsReadOnly="True"></DataGrid>
                                 </GroupBox>
-                            </TabItem> 
+                            </TabItem>
                             <TabItem HorizontalAlignment="Left" Header="Вылов">
                                 <GroupBox Grid.Column="1" Header="База переработки" Grid.ColumnSpan="2">
                                     <DataGrid EnableRowVirtualization="True" ItemsSource="{Binding ProductData}" IsReadOnly="True"></DataGrid>
                                 </GroupBox>
-                            </TabItem> 
+                            </TabItem>
                             <TabItem HorizontalAlignment="Left" Header="Ext">
                                 <GroupBox Grid.Column="1" Header="Из системы Меркурий №1" Grid.ColumnSpan="2">
                                     <DataGrid EnableRowVirtualization="True" ItemsSource="{Binding ExtData}" IsReadOnly="True"></DataGrid>
                                 </GroupBox>
-                            </TabItem> 
+                            </TabItem>
                             <TabItem HorizontalAlignment="Left" Header="Из системы Меркурий №2">
                                 <DataGrid EnableRowVirtualization="True" ItemsSource="{Binding Ext2Data}" IsReadOnly="True"/>
-                            </TabItem> 
+                            </TabItem>
                         </TabControl>
                     </Grid>
                 </TabItem>

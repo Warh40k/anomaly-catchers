@@ -63,8 +63,8 @@ namespace testMVVM.ViewModels
 
         #region Путь к базе данных №1
 
-        private object _Db1Path;
-        public object Db1Path { get => _Db1Path; set => Set(ref _Db1Path, value); }
+        private object _DbPath;
+        public object DbPath { get => _DbPath; set => Set(ref _DbPath, value); }
 
         #endregion
 
@@ -220,7 +220,8 @@ namespace testMVVM.ViewModels
         private bool CanSearchAnomalyCommandExecute(object p) => true;
         private void OnSearchAnomalyCommandExecuted(object p)
         {
-
+            string exepath = "data\\model.exe";
+            System.Diagnostics.Process.Start(exepath, $"\"{DbPath}\" \"{Db2Path}\"");
             string json = File.ReadAllText(@"data\result.json");
             JObject result_object = JObject.Parse(json);
             JArray result_array = (JArray)result_object["anomaly_list"];
@@ -338,19 +339,19 @@ namespace testMVVM.ViewModels
 
             try
             {
-                var fish_task = await GetReference(Db1Path + @"\ref\fish.csv");
+                var fish_task = await GetReference(DbPath + @"\ref\fish.csv");
 
-                var fishref = await GetReference(Db1Path + @"\ref\fish.csv");
-                var prod_designate = await GetReference(Db1Path + @"\ref\prod_designate.csv");
-                var prod_type = await GetReference(Db1Path + @"\ref\prod_type.csv");
-                var region = await GetReference(Db1Path + @"\ref\region.csv");
-                var regime = await GetReference(Db1Path + @"\ref\regime.csv");
+                var fishref = await GetReference(DbPath + @"\ref\fish.csv");
+                var prod_designate = await GetReference(DbPath + @"\ref\prod_designate.csv");
+                var prod_type = await GetReference(DbPath + @"\ref\prod_type.csv");
+                var region = await GetReference(DbPath + @"\ref\region.csv");
+                var regime = await GetReference(DbPath + @"\ref\regime.csv");
 
                 #endregion
 
                 List<Catch> catch_report = new List<Catch>();
 
-                using(StreamReader reader = new StreamReader(Db1Path + @"\catch.csv"))
+                using(StreamReader reader = new StreamReader(DbPath + @"\catch.csv"))
                 {
                     reader.ReadLine();
                     while (!reader.EndOfStream)
@@ -376,7 +377,7 @@ namespace testMVVM.ViewModels
 
                 List<Product> product_report = new List<Product>();
 
-                using(StreamReader reader = new StreamReader(Db1Path + @"\product.csv"))
+                using(StreamReader reader = new StreamReader(DbPath + @"\product.csv"))
                 {
                     reader.ReadLine();
                     while (!reader.EndOfStream)
