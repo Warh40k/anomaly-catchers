@@ -12,7 +12,7 @@ def repeat_anomaly(ext2, json_file='delay_anomaly_report.json'):
             c3 = pd.Timedelta(lines.date_vsd.iloc[0] - lines.date_vsd.iloc[1]).seconds / 3600.0 < 1
             c4 = lines.fish.iloc[0] == lines.fish.iloc[1]
             if c1 & c2 & c3 & c4:
-                anomaly_dict['mistake'].append(lines[['id_vsd', 'date_vsd']].to_json())          
+                anomaly_dict['mistake'].append(lines[['id_vsd', 'date_vsd', 'volume', 'unit']].to_json())          
             if (c1 & c2 & c4) and not c3:
-                anomaly_dict['violation'].append(lines[['id_vsd', 'date_vsd']].to_json())          
+                anomaly_dict['violation'].append(lines[['id_vsd', 'date_vsd', 'volume', 'unit']].to_json())          
         json.dump(anomaly_dict, f)
