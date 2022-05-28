@@ -40,6 +40,15 @@ namespace testMVVM.ViewModels
 
         #endregion
 
+        #region Выбранное уведомление в списке
+
+        private Anomaly _SelectedNotification;
+        public Anomaly SelectedNotification
+        {
+            get => _SelectedNotification; set => Set(ref _SelectedNotification, value);
+        }
+        #endregion
+
         #region Список уведомлений
 
         private List<Anomaly> _NotificationsList;
