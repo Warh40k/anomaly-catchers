@@ -31,14 +31,16 @@ samp_1 = ext1[(ext1.date_fishery >= pd.to_datetime(date_from)) & (ext1.date_fish
 samp_2 = ext2[(ext2.date_vsd >= pd.to_datetime(date_from)) & (ext2.date_vsd <= pd.to_datetime(date_to))]
 
 
-anomaly_dict = {}
+anomaly_dict = {'repeat_report': {'visualisation':None, 'anomaly_anount':0}}
 
 # поиск аномалии ошибки в единицах измерения и отправке повторного отчета
 # нужен данные, подобный ext2
 json_file='delay_report_anomaly.json'
-repeat_report = repeat_anomaly(samp_2) 
+repeat_report, anomaly_amount = repeat_anomaly(samp_2) 
 
-anomaly_dict['repeat_report'] = repeat_report
+anomaly_dict['repeat_report']['visualisation'] = repeat_report
+anomaly_dict['repeat_report']['anomaly_amount'] = anomaly_amount
+
 
 
 # Машиночитаемый вид
