@@ -35,7 +35,7 @@ anomaly_dict = {'repeat_report': {'visualisation':None, 'anomaly_anount':0}}
 
 # поиск аномалии ошибки в единицах измерения и отправке повторного отчета
 # нужен данные, подобный ext2
-json_file='delay_report_anomaly.json'
+json_file='anomaly.json'
 repeat_report, anomaly_amount = repeat_anomaly(samp_2) 
 
 anomaly_dict['repeat_report']['visualisation'] = repeat_report
