@@ -99,14 +99,16 @@
                             <ColumnDefinition Width="2*"/>
                             <ColumnDeddfinition Width="15*"/>
                         </Grid.ColumnDefinitions>-->
-                        <TabControl TabStripPlacement="Left" Margin="0,0,0,0" VerticalAlignment="Stretch" FontSize="14">
-                            <TabControl.Resources>
+                        <TabControl TabStripPlacement="Bottom" Margin="0,0,0,0" HorizontalContentAlignment="Left" FontSize="14">
+                            <!--<TabControl.Resources>
                                 <Style TargetType="{x:Type TabItem}">
-                                    <Setter Property="Width" Value="120"/>
+                                    <Setter Property="Width" Value="Auto"/>
                                     <Setter Property="Padding" Value="10,10"/>
-                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    <Setter Property="HorizontalAlignment" Value="Left"/>
+                                    <Setter Property="Margin" Value="0"/>
+
                                 </Style>
-                            </TabControl.Resources>
+                            </TabControl.Resources>-->
                             <!--<TabControl.Resources>
                                 <Style TargetType="{x:Type TabItem}">
                                     <Setter Property="HeaderTemplate">
@@ -130,16 +132,16 @@
                                 </GroupBox>
                             </TabItem> 
                             <TabItem HorizontalAlignment="Left" Header="Вылов">
-                                <GroupBox Grid.Column="1" Header="База Вылова" Grid.ColumnSpan="2">
+                                <GroupBox Grid.Column="1" Header="База переработки" Grid.ColumnSpan="2">
                                     <DataGrid EnableRowVirtualization="True" ItemsSource="{Binding ProductData}" IsReadOnly="True"></DataGrid>
                                 </GroupBox>
                             </TabItem> 
                             <TabItem HorizontalAlignment="Left" Header="Ext">
-                                <GroupBox Grid.Column="1" Header="База Вылова" Grid.ColumnSpan="2">
+                                <GroupBox Grid.Column="1" Header="Из системы Меркурий №1" Grid.ColumnSpan="2">
                                     <DataGrid EnableRowVirtualization="True" ItemsSource="{Binding ExtData}" IsReadOnly="True"></DataGrid>
                                 </GroupBox>
                             </TabItem> 
-                            <TabItem HorizontalAlignment="Left" Header="Ext2"></TabItem> 
+                            <TabItem HorizontalAlignment="Left" Header="Из системы Меркурий №2"></TabItem> 
                         </TabControl>
                         <!--<GroupBox Header="Элементы">
                             <GroupBox.Resources>
