@@ -78,7 +78,7 @@
                     <TextBox x:Name="db2_textbox" Grid.Column="0" Margin="3" Text="{Binding Db2Path, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                     <Button Grid.Column="1" Content="Обзор" Width="80" Margin="3" Click="Button_Click_1"/>
                 </Grid>
-                <Button Width="150" Margin="10" Content="Поиск аномалий" Command="{Binding }" Cursor="Hand" Click="Button_Click_2"></Button>
+                <Button Width="150" Margin="10" Content="Поиск аномалий" Command="{Binding SearchAnomalyCommand}" Cursor="Hand"></Button>
                 <Button Width="150" Content="Показать базы" Command="{Binding ImportConfirmCommand}" Cursor="Hand"/>
             </StackPanel>
             <TabControl Width= "Auto" Grid.Column ="1" HorizontalAlignment="Stretch" SelectedIndex="{Binding SelectedPageIndex}" >

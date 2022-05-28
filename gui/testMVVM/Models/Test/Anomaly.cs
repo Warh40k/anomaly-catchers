@@ -8,8 +8,18 @@ namespace testMVVM.Models.Test
 {
     internal class Anomaly
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string Description { get; set; }
+
+        public Status Priority{ get; set; }
+
+        public enum Status
+        {
+            Minor,
+            Middle,
+            Dangerous,
+            Critical
+        }
 
     }
 }

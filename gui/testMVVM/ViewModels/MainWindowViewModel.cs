@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -17,19 +18,9 @@ namespace testMVVM.ViewModels
 {
     internal class MainWindowViewModel : ViewModel
     {
-        //public ObservableCollection<Group> Groups { get; }
-        //static public IEnumerable<Anomaly> dict = new IEnumerable<Anomaly>
-        //{
-        //    //{"01", "Наличие значений, сильно выше или ниже средних значений по отрасли или для данного судна." +
-        //    //    "\n\nПожалуйста, проверьте представленные данные и, если это необходимо, подвердите отправку официальному представителю РосРыболовства"},
-        //    //{"04", "Ошибка в выборе единиц измерений\n\n" }
-        //    new Anomaly{Id = "01", 
-        //        Description = "Наличие значений, сильно выше или ниже средних значений по отрасли или для данного судна. Наличие значений, сильно выше или ниже средних значений по отрасли или для данного судна"},
-        //    new Anomaly{Id = "02", 
-        //        Description = "Незначительное нарушение.\n\nПожалуйста, проверьте полученную информацию. В случае обнаружения признаков незаконной деятельности подтвердите отправку данныхh"}
 
-        //};
-        #region Список искомых аномалий
+
+        #region Список найденных аномалий
         
         private List<Anomaly> _AnomalyList;
 
@@ -69,7 +60,7 @@ namespace testMVVM.ViewModels
 
         #endregion
 
-        #region
+        #region Данные таблицы Ext
 
         private List<Ext> _ExtData;
 
@@ -92,15 +83,6 @@ namespace testMVVM.ViewModels
 
         private object _SelectedCompositeValue;
         public object SelectedCompositeValue { get => _SelectedCompositeValue; set => Set(ref _SelectedCompositeValue, value); }
-
-        #endregion
-        #region Выбранная группа
-        /// <summary>
-        /// Выбранная группа в списке
-        /// </summary>
-
-        // private Group _SelectedGroup;
-        //public Group SelectedGroup { get => _SelectedGroup; set => Set(ref _SelectedGroup, value); } 
 
         #endregion
 
@@ -142,8 +124,6 @@ namespace testMVVM.ViewModels
 
         private IEnumerable<Catch> _CatchData;
 
-        /// <summary> Тестовый набор данных для визуализации графиков </summary>
-
         public IEnumerable<Catch> CatchData
         {
             get => _CatchData;
@@ -162,6 +142,7 @@ namespace testMVVM.ViewModels
         }
 
         #endregion
+
         #region Заголовок окна 
 
         private string _Title = "Поиск аномалий";
@@ -170,17 +151,6 @@ namespace testMVVM.ViewModels
         public string Title
         {
             get => _Title;
-            //set
-            //{
-            //    // 1) Можно так
-            //    //if (Equals(_Title, value)) return;
-            //    //_Title = value;
-            //    //OnPropertyChanged();
-
-            //    //2) Можно и так
-            //    //Set(ref _Title, value);
-            //}
-            //3) Но самое жесткое
             set => Set(ref _Title, value);
         }
 
@@ -194,19 +164,10 @@ namespace testMVVM.ViewModels
             set => Set(ref _FishReference, value);
         }
         #endregion
-        #region Status: string - Статус программы
-
-        ///<summary>Статус программы</summary>
-        private string _Status = "Готово";
-
-        public string Status { get => _Status; set => Set(ref _Status, value); }
-
-        #endregion
 
         /*********************************************************************************************************************************************/
 
         #region Команды
-
 
         #region CloseApplicationCommand
         public ICommand CloseApplicationCommand { get; }
@@ -245,14 +206,29 @@ namespace testMVVM.ViewModels
         #endregion
 
 
-        #region ConfirmPathCommand
+        #region SearchAnomalyCommand
         public ICommand SearchAnomalyCommand { get; }
 
         private bool CanSearchAnomalyCommandExecute(object p) => true;
         private void OnSearchAnomalyCommandExecuted(object p)
         {
-            string exepath = "";
-            System.Diagnostics.Process.Start(exepath, (string)Db1Path + " " + (string)Db2Path).WaitForExit();
+
+            string json = File.ReadAllText(@"data\result.json");
+            JObject result_object = JObject.Parse(json);
+            JArray result_array = (JArray)result_object["anomaly_list"];
+
+            NotificationsList = new List<Notification>();
+
+            for(int i=0; i< result_array.Count; i++)
+            {
+                JObject item = (JObject)result_array[i];
+                NotificationsList.Add(new Notification
+                {
+                    Date = DateTime.Now,
+                    Anomaly = AnomalyList[(int)item["id"]]
+                });
+            }
+            
         }
 
         #endregion
@@ -266,11 +242,17 @@ namespace testMVVM.ViewModels
             CloseApplicationCommand = new RelatedCommand(OnCloseApplicationCommandExecuted, CanCloseApplicationCommandExecute);
             ChangeSelectedIndexCommand = new RelatedCommand(OnChangeSelectedIndexCommandExecuted, CanChangeSelectedIndexCommandExecute);
             ImportConfirmCommand = new RelatedCommand(OnImportConfirmCommandExecuted, CanImportConfirmCommandExecute);
-            SearchAnomalyCommand = new RelatedCommand(OnImportConfirmCommandExecuted, CanImportConfirmCommandExecute);
+            SearchAnomalyCommand = new RelatedCommand(OnSearchAnomalyCommandExecuted, CanSearchAnomalyCommandExecute);
 
 
             #endregion
 
+            AnomalyList = new List<Anomaly>
+            {
+                new Anomaly {Id = 1, Description = "Серьезная аномаль", Priority = Anomaly.Status.Dangerous},
+                new Anomaly {Id = 2, Description = "Не страшно", Priority = Anomaly.Status.Minor},
+                new Anomaly {Id = 3, Description = "Не очень", Priority = Anomaly.Status.Middle}
+            };
             var data_points = new List<DataPoint>((int)(360 / 0.1));
 
             for (var x = 0d; x <= 360; x += 0.1)
@@ -294,23 +276,15 @@ namespace testMVVM.ViewModels
                 new Notification
                 {
                     Date = DateTime.Now,
-                    Anomaly = new Anomaly
-                    {
-                        Id = "01",
-                        Description = "Все плохо"
-                    }
+                    Anomaly = new Anomaly {Id = 1, Description = "Серьезная аномаль", Priority = Anomaly.Status.Dangerous},
                 },
 
                 new Notification
                 {
                     Date = DateTime.Today,
-                    Anomaly = new Anomaly
-                    {
-                        Id = "02",
-                        Description = "Не лучше"
-                    }
+                    Anomaly = new Anomaly {Id = 2, Description = "Не страшно", Priority = Anomaly.Status.Minor},
                 },
-            };            
+            };
 
 
             //using var watcher = new FileSystemWatcher(@"C:\");
