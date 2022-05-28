@@ -127,7 +127,7 @@ namespace testMVVM.ViewModels
         #region Выбранный поиск аномалии
 
         private Anomaly _SelectedAnomaly;
-        public Anomaly SelectedAnomalyTab { get => _SelectedAnomaly; set => Set(ref _SelectedAnomaly, value); }
+        public Anomaly SelectedAnomaly { get => _SelectedAnomaly; set => Set(ref _SelectedAnomaly, value); }
 
         #endregion
 
@@ -259,15 +259,23 @@ namespace testMVVM.ViewModels
         {
             try
             {
-                string exepath = "data\\model.exe";
-                //System.Diagnostics.Process.Start(exepath, $"\"{DbPath}\" \"{DateFrom}\" \"{DateTo}\"").WaitForExit();
                 
+                string exepath = "data\\model.exe";
+                //System.Diagnostics.Process.Start(exepath, $"\"{DbPath}\" \"{DateFrom}\" \"{DateTo}\" \"{SelectedAnomaly}").WaitForExit();
+                 
                 List<Notification> notify_list = new List<Notification>();
 
-                string human_readable_report = File.ReadAllText("delay_report_anomaly.txt");
-                HumanReport = human_readable_report;
-
-
+                string text = File.ReadAllText("delay_report_anomaly.txt");
+                string first_line = text.Substring(0, text.IndexOf('\r'));
+                if (!first_line.Contains('0'))
+                    notify_list.Add(new Notification
+                    {
+                        Date = DateTime.Now,
+                        Anomaly = SelectedAnomaly,
+                        Name = SelectedAnomaly.Name + "\n" + first_line
+                    });
+                HumanReport = text;
+                
                 NotificationsList = notify_list;
 
             }
@@ -296,8 +304,8 @@ namespace testMVVM.ViewModels
 
             AnomalyList = new List<Anomaly>
             {
-                new Anomaly {Id = 1, Name = "Отсутствие или искажение обязательной информации в ССД", Description = "", Priority = Anomaly.Status.Dangerous},
-                new Anomaly {Id = 2, Name = "Несоответствие данных привоза продукции и переработки", Description = "", Priority = Anomaly.Status.Minor},
+                new Anomaly {Id = 1, Name = "Отсутствие или искажение обязательной информации в ССД", Description = "Так себе", Priority = Anomaly.Status.Dangerous},
+                new Anomaly {Id = 2, Name = "Несоответствие данных привоза продукции и переработки", Description = "Не очень", Priority = Anomaly.Status.Minor},
                 new Anomaly {Id = 3, Name = "Серьезное нарушение соответствия данных между ССД и данными системы “Меркурий”", Description = "Не очень", Priority = Anomaly.Status.Middle}
             };
             var data_points = new List<DataPoint>((int)(360 / 0.1));

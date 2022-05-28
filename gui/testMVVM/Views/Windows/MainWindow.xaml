@@ -87,7 +87,6 @@
                     </Grid.ColumnDefinitions>
                     <DatePicker Grid.Column="0" Margin="3,3,3,3" SelectedDate="{Binding DateTo, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2"></DatePicker>
                 </Grid>
-                <Button Width="150" Margin="10" Content="Поиск аномалий" Command="{Binding SearchAnomalyCommand}" Cursor="Hand"></Button>
                 <Button Width="150" Content="Показать базы" Command="{Binding ImportConfirmCommand}" Cursor="Hand"/>
                 <Image Source="resources\logo.jpg" Width="250" Margin="15"></Image>
             </StackPanel>
@@ -101,8 +100,9 @@
                     </TabItem.Header>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*"/>
-                            <ColumnDefinition Width="10*"/>
+                            <ColumnDefinition Width="333*"/>
+                            <ColumnDefinition Width="527*"/>
+                            <ColumnDefinition Width="140*"/>
                         </Grid.ColumnDefinitions>
                         <ListView x:Name="notify_listview" SelectedItem="{Binding SelectedNotification}" ItemsSource="{Binding NotificationsList, UpdateSourceTrigger=PropertyChanged}" FontSize="25">
                             <ListView.Resources>
@@ -114,7 +114,7 @@
                                 </DataTemplate>
                             </ListView.Resources>
                         </ListView>
-                        <ContentControl FontSize="30" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{Binding SelectedNotification.Anomaly.Description}"/>
+                        <ContentControl FontSize="30" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Content="{Binding SelectedNotification.Anomaly.Description}" Margin="334,0,0,0"/>
                     </Grid>
                 </TabItem>
                 <TabItem MaxWidth="1000">
@@ -191,10 +191,10 @@
                             <RowDefinition Height="10*"/>
                             <RowDefinition Height="2*"/>
                         </Grid.RowDefinitions>
-                        <ContentControl Grid.Row="0" Content="{Binding HumanReport}"></ContentControl>
+                        <ContentControl FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0" Content="{Binding HumanReport}"></ContentControl>
                         <StackPanel Grid.Row="1">
                             <ComboBox VerticalAlignment="Bottom" HorizontalAlignment="Center" MinWidth="300" SelectedItem="{Binding SelectedAnomaly}" ItemsSource="{Binding AnomalyList}"/>
-                            <Button Content="Поиск" Width="120"></Button>
+                            <Button Content="Поиск" Command="{Binding SearchAnomalyCommand}" Width="120"></Button>
                         </StackPanel>
                     </Grid>
                 </TabItem>
