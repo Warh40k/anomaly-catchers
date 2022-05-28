@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,38 @@ namespace testMVVM.ViewModels
     internal class MainWindowViewModel : ViewModel
     {
         //public ObservableCollection<Group> Groups { get; }
+        //static public IEnumerable<Anomaly> dict = new IEnumerable<Anomaly>
+        //{
+        //    //{"01", "Наличие значений, сильно выше или ниже средних значений по отрасли или для данного судна." +
+        //    //    "\n\nПожалуйста, проверьте представленные данные и, если это необходимо, подвердите отправку официальному представителю РосРыболовства"},
+        //    //{"04", "Ошибка в выборе единиц измерений\n\n" }
+        //    new Anomaly{Id = "01", 
+        //        Description = "Наличие значений, сильно выше или ниже средних значений по отрасли или для данного судна. Наличие значений, сильно выше или ниже средних значений по отрасли или для данного судна"},
+        //    new Anomaly{Id = "02", 
+        //        Description = "Незначительное нарушение.\n\nПожалуйста, проверьте полученную информацию. В случае обнаружения признаков незаконной деятельности подтвердите отправку данныхh"}
+
+        //};
+        #region Список искомых аномалий
+        
+        private List<Anomaly> _AnomalyList;
+
+        public List<Anomaly> AnomalyList
+        {
+            get => _AnomalyList; set => Set(ref _AnomalyList, value);
+        }
+
+        #endregion
+
+        #region Список уведомлений
+
+        private List<Anomaly> _NotificationsList;
+
+        public List<Anomaly> NotificationsList
+        {
+            get => _NotificationsList; set => Set(ref _NotificationsList, value);
+        }
+
+        #endregion
 
         public object[] CompositeCollection { get; }
 
@@ -202,41 +235,18 @@ namespace testMVVM.ViewModels
 
         #endregion
 
-        //#region CreateGroupCommand
 
-        //public ICommand CreateGroupCommand { get; }
+        #region ConfirmPathCommand
+        public ICommand SearchAnomalyCommand { get; }
 
-        //private bool CanCreateGroupCommandExecute(object p) => true;
+        private bool CanSearchAnomalyCommandExecute(object p) => true;
+        private void OnSearchAnomalyCommandExecuted(object p)
+        {
+            string exepath = "";
+            System.Diagnostics.Process.Start(exepath, (string)Db1Path + " " + (string)Db2Path).WaitForExit();
+        }
 
-        //private void OnCreateGroupCommandExecuted(object p)
-        //{
-        //    var group_max_index = Groups.Count + 1;
-        //    var new_group = new Group
-        //    {
-        //        Name = $"Группа {group_max_index}",
-        //        DataBase = new ObservableCollection<DataBase>()
-        //    };
-
-        //    Groups.Add(new_group);
-        //}
-
-        //#endregion
-
-        //#region DeleteGroupCommand
-
-        //public ICommand DeleteGroupCommand { get; }
-
-        //private bool CanDeleteGroupCommandExecute(object p) => p is Group group && Groups.Contains(group);
-        //private void OnDeleteGroupCommandExecuted(object p)
-        //{
-        //    if (!(p is Group group)) return;
-        //    int group_index = Groups.IndexOf(group);
-        //    Groups.Remove(group);
-        //    if (group_index < Groups.Count)
-        //        SelectedGroup = Groups[group_index];
-        //}
-
-        //#endregion
+        #endregion
 
         #endregion
         /*********************************************************************************************************************************************/
@@ -247,6 +257,7 @@ namespace testMVVM.ViewModels
             CloseApplicationCommand = new RelatedCommand(OnCloseApplicationCommandExecuted, CanCloseApplicationCommandExecute);
             ChangeSelectedIndexCommand = new RelatedCommand(OnChangeSelectedIndexCommandExecuted, CanChangeSelectedIndexCommandExecute);
             ImportConfirmCommand = new RelatedCommand(OnImportConfirmCommandExecuted, CanImportConfirmCommandExecute);
+            SearchAnomalyCommand = new RelatedCommand(OnImportConfirmCommandExecuted, CanImportConfirmCommandExecute);
 
 
             #endregion
@@ -263,54 +274,27 @@ namespace testMVVM.ViewModels
 
             TestDataPoints = data_points;
 
-
-
-
-            //List<Product> product_report = new List<Product>();
-
-            //using(StreamReader reader = new StreamReader(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\product.csv"))
-            //{
-            //    reader.ReadLine();
-            //    while (!reader.EndOfStream)
-            //    {
-            //        string[] row = reader.ReadLine().Split(',');
-            //        var current_product = new Product();
-            //        current_product.Id_ves = Convert.ToInt32(row[0]);
-            //        current_product.Date = Convert.ToDateTime(row[1]);
-            //        current_product.Id_prod_designate = prod_designate[row[2]].Trim('"');
-
-            //        if (prod_type.ContainsKey(row[3])) current_product.Prod_type = prod_type[row[3]].Trim('"');
-            //        current_product.Prod_volume = Convert.ToDecimal(row[4].Replace('.', ','));
-            //        current_product.Prod_board_volume = Convert.ToDecimal(row[5].Replace('.', ','));
-
-            //        product_report.Add(current_product);
-            //    }
-            //}
-
-            //ProductData = product_report;
-
-
-
-
-
-            //var groups = Enumerable.Range(1, 20).Select(i => new Group()
-            //{
-            //    Name = "Группа" + i.ToString(),
-            //    DataBase = new ObservableCollection<DataBase>(students)
-            //});
-
-            // Groups = new ObservableCollection<Group>(groups);
-
             var data_list = new List<object>();
 
             data_list.Add("Hello World");
             data_list.Add(42);
-            //     data_list.Add(Groups[1].DataBase[1]);
-            //    data_list.Add(Groups[1]);
 
 
+            NotificationsList = new List<Anomaly>
+            {
+                new Anomaly
+                {
+                    Id = "01",
+                    Description = "Все плохо"
+                },
 
-            CompositeCollection = data_list.ToArray();
+                new Anomaly
+                {
+                    Id = "02",
+                    Description = "Ну почти плохо"
+                }
+            };            
+
 
             //using var watcher = new FileSystemWatcher(@"C:\");
 
