@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,18 +18,93 @@ namespace testMVVM.ViewModels
 {
     internal class MainWindowViewModel : ViewModel
     {
-        //public ObservableCollection<Group> Groups { get; }
+        #region Человекочитаемый отчет
 
-        public object[] CompositeCollection { get; }
-
-        #region Путь к базе данных №1
-
-        private object _Db1Path;
-        public object Db1Path { get => _Db1Path; set => Set(ref _Db1Path, value); }
+        
+        private string _HumanReport;
+        public string HumanReport 
+        {
+            get => _HumanReport; set => Set(ref _HumanReport, value);
+        }
 
         #endregion
 
-        #region
+        #region Человекочитаемый отчет
+
+        
+        private List<string> _MachineReport;
+        public List<string> MachineReport 
+        {
+            get => _MachineReport; set => Set(ref _MachineReport, value);
+        }
+
+        #endregion
+
+        #region Данные таблицы Ext2
+
+        private List<Ext2> _Ext2Data;
+        public List<Ext2> Ext2Data 
+        {
+            get => _Ext2Data; set => Set(ref _Ext2Data, value);
+        }
+
+        #endregion
+        
+        #region Список найденных аномалий
+
+        private List<Anomaly> _AnomalyList;
+
+        public List<Anomaly> AnomalyList
+        {
+            get => _AnomalyList; set => Set(ref _AnomalyList, value);
+        }
+
+        #endregion
+
+        #region Выбранное уведомление в списке
+
+        private Notification _SelectedNotification;
+        public Notification SelectedNotification
+        {
+            get => _SelectedNotification; set => Set(ref _SelectedNotification, value);
+        }
+        #endregion
+
+        #region Список уведомлений
+
+        private List<Notification> _NotificationsList;
+
+        public List<Notification> NotificationsList
+        {
+            get => _NotificationsList; set => Set(ref _NotificationsList, value);
+        }
+
+        #endregion
+
+        public object[] CompositeCollection { get; }
+
+        #region Путь к базе данных
+
+        private object _DbPath;
+        public object DbPath { get => _DbPath; set => Set(ref _DbPath, value); }
+
+        #endregion
+
+        #region Дата начала периода
+
+        private DateTime _DateFrom = DateTime.Parse("2022-04-15");
+        public DateTime DateFrom { get => _DateFrom; set => Set(ref _DateFrom, value); }
+
+        #endregion
+
+        #region Дата конца периода
+
+        private DateTime _DateTo = DateTime.Parse("2022-04-20");
+        public DateTime DateTo { get => _DateTo; set => Set(ref _DateTo, value); }
+
+        #endregion
+
+        #region Данные таблицы Ext
 
         private List<Ext> _ExtData;
 
@@ -39,26 +116,10 @@ namespace testMVVM.ViewModels
 
         #endregion
 
-        #region Путь к базе данных №2
-
-        private object _Db2Path;
-        public object Db2Path { get => _Db2Path; set => Set(ref _Db2Path, value); }
-
-        #endregion
-
         #region Выбранный непонятный элемент
 
         private object _SelectedCompositeValue;
         public object SelectedCompositeValue { get => _SelectedCompositeValue; set => Set(ref _SelectedCompositeValue, value); }
-
-        #endregion
-        #region Выбранная группа
-        /// <summary>
-        /// Выбранная группа в списке
-        /// </summary>
-
-        // private Group _SelectedGroup;
-        //public Group SelectedGroup { get => _SelectedGroup; set => Set(ref _SelectedGroup, value); } 
 
         #endregion
 
@@ -100,8 +161,6 @@ namespace testMVVM.ViewModels
 
         private IEnumerable<Catch> _CatchData;
 
-        /// <summary> Тестовый набор данных для визуализации графиков </summary>
-
         public IEnumerable<Catch> CatchData
         {
             get => _CatchData;
@@ -120,6 +179,7 @@ namespace testMVVM.ViewModels
         }
 
         #endregion
+
         #region Заголовок окна 
 
         private string _Title = "Поиск аномалий";
@@ -128,17 +188,6 @@ namespace testMVVM.ViewModels
         public string Title
         {
             get => _Title;
-            //set
-            //{
-            //    // 1) Можно так
-            //    //if (Equals(_Title, value)) return;
-            //    //_Title = value;
-            //    //OnPropertyChanged();
-
-            //    //2) Можно и так
-            //    //Set(ref _Title, value);
-            //}
-            //3) Но самое жесткое
             set => Set(ref _Title, value);
         }
 
@@ -152,19 +201,10 @@ namespace testMVVM.ViewModels
             set => Set(ref _FishReference, value);
         }
         #endregion
-        #region Status: string - Статус программы
-
-        ///<summary>Статус программы</summary>
-        private string _Status = "Готово";
-
-        public string Status { get => _Status; set => Set(ref _Status, value); }
-
-        #endregion
 
         /*********************************************************************************************************************************************/
 
         #region Команды
-
 
         #region CloseApplicationCommand
         public ICommand CloseApplicationCommand { get; }
@@ -202,41 +242,47 @@ namespace testMVVM.ViewModels
 
         #endregion
 
-        //#region CreateGroupCommand
 
-        //public ICommand CreateGroupCommand { get; }
+        #region SearchAnomalyCommand
+        public ICommand SearchAnomalyCommand { get; }
 
-        //private bool CanCreateGroupCommandExecute(object p) => true;
+        private bool CanSearchAnomalyCommandExecute(object p) => true;
+        private void OnSearchAnomalyCommandExecuted(object p)
+        {
+            try
+            {
+                string exepath = "data\\model.exe";
+                //System.Diagnostics.Process.Start(exepath, $"\"{DbPath}\" \"{DateFrom}\" \"{DateTo}\"").WaitForExit();
+                string json = File.ReadAllText(@"delay_report_anomaly.json");
+                //JObject result_object = JObject.Parse(json);
+                //JArray result_array = (JArray)result_object[""];
+                //List<Notification> notify_list = new List<Notification>();
 
-        //private void OnCreateGroupCommandExecuted(object p)
-        //{
-        //    var group_max_index = Groups.Count + 1;
-        //    var new_group = new Group
-        //    {
-        //        Name = $"Группа {group_max_index}",
-        //        DataBase = new ObservableCollection<DataBase>()
-        //    };
+                //for(int i=0; i< result_array.Count; i++)
+                //{
+                //    JObject item = (JObject)result_array[i];
+                //    Anomaly anomaly = AnomalyList[(int)item["id"]];
+                //    notify_list.Add(new Notification
+                //    {
+                //        Date = DateTime.Now,
+                //        Anomaly = anomaly
+                //    });   
+                //}
 
-        //    Groups.Add(new_group);
-        //}
+                //NotificationsList = notify_list;
+                string human_readable_report = File.ReadAllText("delay_report_anomaly.txt");
+                HumanReport = human_readable_report;
 
-        //#endregion
 
-        //#region DeleteGroupCommand
+            }
+            catch (IOException ex)
+            {
+                MessageBox.Show(ex.Message + "\nПопробуйте изменить входные данные", "Ошибка выполнения", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            
+        }
 
-        //public ICommand DeleteGroupCommand { get; }
-
-        //private bool CanDeleteGroupCommandExecute(object p) => p is Group group && Groups.Contains(group);
-        //private void OnDeleteGroupCommandExecuted(object p)
-        //{
-        //    if (!(p is Group group)) return;
-        //    int group_index = Groups.IndexOf(group);
-        //    Groups.Remove(group);
-        //    if (group_index < Groups.Count)
-        //        SelectedGroup = Groups[group_index];
-        //}
-
-        //#endregion
+        #endregion
 
         #endregion
         /*********************************************************************************************************************************************/
@@ -247,10 +293,17 @@ namespace testMVVM.ViewModels
             CloseApplicationCommand = new RelatedCommand(OnCloseApplicationCommandExecuted, CanCloseApplicationCommandExecute);
             ChangeSelectedIndexCommand = new RelatedCommand(OnChangeSelectedIndexCommandExecuted, CanChangeSelectedIndexCommandExecute);
             ImportConfirmCommand = new RelatedCommand(OnImportConfirmCommandExecuted, CanImportConfirmCommandExecute);
+            SearchAnomalyCommand = new RelatedCommand(OnSearchAnomalyCommandExecuted, CanSearchAnomalyCommandExecute);
 
 
             #endregion
 
+            AnomalyList = new List<Anomaly>
+            {
+                new Anomaly {Id = 1, Name = "Отсутствие или искажение обязательной информации в ССД", Description = "", Priority = Anomaly.Status.Dangerous},
+                new Anomaly {Id = 2, Name = "Несоответствие данных привоза продукции и переработки", Description = "", Priority = Anomaly.Status.Minor},
+                new Anomaly {Id = 3, Name = "Серьезное нарушение соответствия данных между ССД и данными системы “Меркурий”", Description = "Не очень", Priority = Anomaly.Status.Middle}
+            };
             var data_points = new List<DataPoint>((int)(360 / 0.1));
 
             for (var x = 0d; x <= 360; x += 0.1)
@@ -263,54 +316,28 @@ namespace testMVVM.ViewModels
 
             TestDataPoints = data_points;
 
-
-
-
-            //List<Product> product_report = new List<Product>();
-
-            //using(StreamReader reader = new StreamReader(@"C:\Users\user\Desktop\Rosrybolovstvo\Датасет\db1\product.csv"))
-            //{
-            //    reader.ReadLine();
-            //    while (!reader.EndOfStream)
-            //    {
-            //        string[] row = reader.ReadLine().Split(',');
-            //        var current_product = new Product();
-            //        current_product.Id_ves = Convert.ToInt32(row[0]);
-            //        current_product.Date = Convert.ToDateTime(row[1]);
-            //        current_product.Id_prod_designate = prod_designate[row[2]].Trim('"');
-
-            //        if (prod_type.ContainsKey(row[3])) current_product.Prod_type = prod_type[row[3]].Trim('"');
-            //        current_product.Prod_volume = Convert.ToDecimal(row[4].Replace('.', ','));
-            //        current_product.Prod_board_volume = Convert.ToDecimal(row[5].Replace('.', ','));
-
-            //        product_report.Add(current_product);
-            //    }
-            //}
-
-            //ProductData = product_report;
-
-
-
-
-
-            //var groups = Enumerable.Range(1, 20).Select(i => new Group()
-            //{
-            //    Name = "Группа" + i.ToString(),
-            //    DataBase = new ObservableCollection<DataBase>(students)
-            //});
-
-            // Groups = new ObservableCollection<Group>(groups);
-
             var data_list = new List<object>();
 
             data_list.Add("Hello World");
             data_list.Add(42);
-            //     data_list.Add(Groups[1].DataBase[1]);
-            //    data_list.Add(Groups[1]);
 
+            NotificationsList = new List<Notification>();
 
+            //NotificationsList = new List<Notification>
+            //{
+            //    new Notification
+            //    {
+            //        Date = DateTime.Now,
+            //        Anomaly = new Anomaly {Id = 1, Description = "Серьезная аномаль", Priority = Anomaly.Status.Dangerous},
+            //    },
 
-            CompositeCollection = data_list.ToArray();
+            //    new Notification
+            //    {
+            //        Date = DateTime.Today,
+            //        Anomaly = new Anomaly {Id = 2, Description = "Не страшно", Priority = Anomaly.Status.Minor},
+            //    },
+            //};
+
 
             //using var watcher = new FileSystemWatcher(@"C:\");
 
@@ -352,19 +379,19 @@ namespace testMVVM.ViewModels
 
             try
             {
-                var fish_task = await GetReference(Db1Path + @"\ref\fish.csv");
+                var fish_task = await GetReference(DbPath + @"\ref\fish.csv");
 
-                var fish = await GetReference(Db1Path + @"\ref\fish.csv");
-                var prod_designate = await GetReference(Db1Path + @"\ref\prod_designate.csv");
-                var prod_type = await GetReference(Db1Path + @"\ref\prod_type.csv");
-                var region = await GetReference(Db1Path + @"\ref\region.csv");
-                var regime = await GetReference(Db1Path + @"\ref\regime.csv");
+                var fishref = await GetReference(DbPath + @"\ref\fish.csv");
+                var prod_designate = await GetReference(DbPath + @"\ref\prod_designate.csv");
+                var prod_type = await GetReference(DbPath + @"\ref\prod_type.csv");
+                var region = await GetReference(DbPath + @"\ref\region.csv");
+                var regime = await GetReference(DbPath + @"\ref\regime.csv");
 
                 #endregion
 
                 List<Catch> catch_report = new List<Catch>();
 
-                using(StreamReader reader = new StreamReader(Db1Path + @"\catch.csv"))
+                using(StreamReader reader = new StreamReader(DbPath + @"\catch.csv"))
                 {
                     reader.ReadLine();
                     while (!reader.EndOfStream)
@@ -377,7 +404,7 @@ namespace testMVVM.ViewModels
                             Id_ves = int.Parse(catch_arr[0]),
                             Date = DateTime.Parse(catch_arr[1]),
                             Id_region = region[catch_arr[2]].Trim('"'),
-                            Id_fish = fish[catch_arr[3]].Trim('"'),
+                            Id_fish = fishref[catch_arr[3]].Trim('"'),
                             Catch_volume = decimal.Parse(catch_arr[4].Replace('.', ',')),
                             Id_regime = regime[catch_arr[5]].Trim('"'),
                             Permit = int.Parse(catch_arr[6]),
@@ -390,7 +417,7 @@ namespace testMVVM.ViewModels
 
                 List<Product> product_report = new List<Product>();
 
-                using(StreamReader reader = new StreamReader(Db1Path + @"\product.csv"))
+                using(StreamReader reader = new StreamReader(DbPath + @"\product.csv"))
                 {
                     reader.ReadLine();
                     while (!reader.EndOfStream)
@@ -415,7 +442,7 @@ namespace testMVVM.ViewModels
 
                 List<Ext> ext_report = new List<Ext>();
 
-                using (StreamReader reader = new StreamReader(Db2Path + @"\Ext.csv"))
+                using (StreamReader reader = new StreamReader(DbPath + @"db2\Ext.csv"))
                 {
                     reader.ReadLine();
 
@@ -424,16 +451,6 @@ namespace testMVVM.ViewModels
                         var row = await reader.ReadLineAsync();
                         string[] row_arr = row.Split(',');
                         var current_product = new Ext();
-                        //current_product.Id_fishery = Convert.ToInt32(row[0]);
-                        //current_product.Id_own = Convert.ToInt32(row[1]);
-                        //current_product.Date_fishery = Convert.ToDateTime(row[2].Trim('"'));
-
-                        //current_product.Num_part = Convert.ToInt32(row[3]); //проверить здесь
-                        //current_product.Id_Plat = Convert.ToInt32(row[4]);
-                        //current_product.Id_vsd = Convert.ToInt32(row[5]);
-                        //current_product.Name_plat = row[6];
-                        //current_product.Product_period = Convert.ToDateTime(row[7]);
-                        //current_product.Region_plat = row[8];
                         int id_fishery, id_own, num_part, id_plat, id_vsd;
                         DateTime product_period, date_fishery;
 
@@ -462,10 +479,49 @@ namespace testMVVM.ViewModels
                 }
 
                 ExtData = ext_report;
+
+                List<Ext2> ext2_report = new List<Ext2>();
+
+                using (StreamReader reader = new StreamReader(DbPath + @"db2\Ext2.csv"))
+                {
+                    reader.ReadLine();
+
+                    while (!reader.EndOfStream)
+                    {
+                        var row = await reader.ReadLineAsync();
+                        string[] row_arr = row.Split(',');
+                        var current_product = new Ext2();
+                        int id_vsd, num_vsd, id_fish;
+                        DateTime date_vsd;
+                        decimal volume;
+                        string fish, unit;
+
+
+                        int.TryParse(row_arr[0], out id_vsd);
+                        int.TryParse(row_arr[1], out num_vsd);
+                        int.TryParse(row_arr[2], out id_fish);
+                        fish = row_arr[3];
+                        DateTime.TryParse(row_arr[4], out date_vsd);
+                        decimal.TryParse(row_arr[5], out volume);
+                        unit = row_arr[6];
+
+                        ext2_report.Add(new Ext2
+                        {
+                            Id_vsd = id_vsd,
+                            Num_vsd = num_vsd,
+                            Id_fish = id_fish,
+                            Date_vsd = date_vsd,
+                            Volume = volume,
+                            Unit = unit
+                        });
+                    }
+                }
+
+                Ext2Data = ext2_report;
             }
             catch (IOException ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "Нет файла", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
         }

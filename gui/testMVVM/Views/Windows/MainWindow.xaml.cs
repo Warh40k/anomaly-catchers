@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
+using System.Text.Json;
+using testMVVM.ViewModels;
 
 namespace testMVVM
 {
@@ -22,15 +25,6 @@ namespace testMVVM
             if (result == System.Windows.Forms.DialogResult.OK)
                 db1_textbox.Text = dialog.SelectedPath;
 
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            FolderBrowserDialog dialog = new FolderBrowserDialog();
-            dialog.SelectedPath = @"C:\Users\user\Documents\Data\db2";
-            var result = dialog.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK)
-                db2_textbox.Text = dialog.SelectedPath;
         }
     }
 }
