@@ -18,6 +18,28 @@ namespace testMVVM.ViewModels
 {
     internal class MainWindowViewModel : ViewModel
     {
+        #region Человекочитаемый отчет
+
+        
+        private string _HumanReport;
+        public string HumanReport 
+        {
+            get => _HumanReport; set => Set(ref _HumanReport, value);
+        }
+
+        #endregion
+
+        #region Человекочитаемый отчет
+
+        
+        private List<string> _MachineReport;
+        public List<string> MachineReport 
+        {
+            get => _MachineReport; set => Set(ref _MachineReport, value);
+        }
+
+        #endregion
+
         #region Данные таблицы Ext2
 
         private List<Ext2> _Ext2Data;
@@ -70,14 +92,14 @@ namespace testMVVM.ViewModels
 
         #region Дата начала периода
 
-        private DateTime _DateFrom = DateTime.Today;
+        private DateTime _DateFrom = DateTime.Parse("2022-04-15");
         public DateTime DateFrom { get => _DateFrom; set => Set(ref _DateFrom, value); }
 
         #endregion
 
         #region Дата конца периода
 
-        private DateTime _DateTo = DateTime.Now;
+        private DateTime _DateTo = DateTime.Parse("2022-04-20");
         public DateTime DateTo { get => _DateTo; set => Set(ref _DateTo, value); }
 
         #endregion
@@ -230,24 +252,28 @@ namespace testMVVM.ViewModels
             try
             {
                 string exepath = "data\\model.exe";
-                System.Diagnostics.Process.Start(exepath, $"\"{DbPath}\" \"{DateFrom}\" \"{DateTo}\"");
-                string json = File.ReadAllText(@"data\result.json");
-                JObject result_object = JObject.Parse(json);
-                JArray result_array = (JArray)result_object["anomaly_list"];
-                List<Notification> notify_list = new List<Notification>();
+                //System.Diagnostics.Process.Start(exepath, $"\"{DbPath}\" \"{DateFrom}\" \"{DateTo}\"").WaitForExit();
+                string json = File.ReadAllText(@"delay_report_anomaly.json");
+                //JObject result_object = JObject.Parse(json);
+                //JArray result_array = (JArray)result_object[""];
+                //List<Notification> notify_list = new List<Notification>();
 
-                for(int i=0; i< result_array.Count; i++)
-                {
-                    JObject item = (JObject)result_array[i];
-                    Anomaly anomaly = AnomalyList[(int)item["id"]];
-                    notify_list.Add(new Notification
-                    {
-                        Date = DateTime.Now,
-                        Anomaly = anomaly
-                    });   
-                }
+                //for(int i=0; i< result_array.Count; i++)
+                //{
+                //    JObject item = (JObject)result_array[i];
+                //    Anomaly anomaly = AnomalyList[(int)item["id"]];
+                //    notify_list.Add(new Notification
+                //    {
+                //        Date = DateTime.Now,
+                //        Anomaly = anomaly
+                //    });   
+                //}
 
-                NotificationsList = notify_list;
+                //NotificationsList = notify_list;
+                string human_readable_report = File.ReadAllText("delay_report_anomaly.txt");
+                HumanReport = human_readable_report;
+
+
             }
             catch (IOException ex)
             {
@@ -275,7 +301,7 @@ namespace testMVVM.ViewModels
             AnomalyList = new List<Anomaly>
             {
                 new Anomaly {Id = 1, Name = "Отсутствие или искажение обязательной информации в ССД", Description = "", Priority = Anomaly.Status.Dangerous},
-                new Anomaly {Id = 2, Name = "Несоответствие данных привоза продукции и переработки", Description = "Не страшно", Priority = Anomaly.Status.Minor},
+                new Anomaly {Id = 2, Name = "Несоответствие данных привоза продукции и переработки", Description = "", Priority = Anomaly.Status.Minor},
                 new Anomaly {Id = 3, Name = "Серьезное нарушение соответствия данных между ССД и данными системы “Меркурий”", Description = "Не очень", Priority = Anomaly.Status.Middle}
             };
             var data_points = new List<DataPoint>((int)(360 / 0.1));
