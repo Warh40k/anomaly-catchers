@@ -127,6 +127,7 @@
     <Compile Include="Models\Test\Anomaly.cs" />
     <Compile Include="Models\Test\Catch.cs" />
     <Compile Include="Models\Test\Ext.cs" />
+    <Compile Include="Models\Test\Notification.cs" />
     <Compile Include="Models\Test\Product.cs" />
     <Compile Include="Models\Test\Reference.cs" />
     <Compile Include="ViewModels\Base\ViewModel.cs" />

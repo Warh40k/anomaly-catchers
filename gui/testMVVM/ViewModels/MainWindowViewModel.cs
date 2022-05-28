@@ -42,8 +42,8 @@ namespace testMVVM.ViewModels
 
         #region Выбранное уведомление в списке
 
-        private Anomaly _SelectedNotification;
-        public Anomaly SelectedNotification
+        private Notification _SelectedNotification;
+        public Notification SelectedNotification
         {
             get => _SelectedNotification; set => Set(ref _SelectedNotification, value);
         }
@@ -51,9 +51,9 @@ namespace testMVVM.ViewModels
 
         #region Список уведомлений
 
-        private List<Anomaly> _NotificationsList;
+        private List<Notification> _NotificationsList;
 
-        public List<Anomaly> NotificationsList
+        public List<Notification> NotificationsList
         {
             get => _NotificationsList; set => Set(ref _NotificationsList, value);
         }
@@ -289,19 +289,27 @@ namespace testMVVM.ViewModels
             data_list.Add(42);
 
 
-            NotificationsList = new List<Anomaly>
+            NotificationsList = new List<Notification>
             {
-                new Anomaly
+                new Notification
                 {
-                    Id = "01",
-                    Description = "Все плохо"
+                    Date = DateTime.Now,
+                    Anomaly = new Anomaly
+                    {
+                        Id = "01",
+                        Description = "Все плохо"
+                    }
                 },
 
-                new Anomaly
+                new Notification
                 {
-                    Id = "02",
-                    Description = "Ну почти плохо"
-                }
+                    Date = DateTime.Today,
+                    Anomaly = new Anomaly
+                    {
+                        Id = "02",
+                        Description = "Не лучше"
+                    }
+                },
             };            
 
 
