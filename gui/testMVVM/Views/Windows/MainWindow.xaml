@@ -94,14 +94,14 @@
                             <ColumnDefinition Width="5*"/>
                             <ColumnDefinition Width="10*"/>
                         </Grid.ColumnDefinitions>
-                        <ListView x:Name="notify_listview" SelectedItem="{Binding SelectedNotification}" ItemsSource="{Binding NotificationsList}" FontSize="25">
+                        <ListView x:Name="notify_listview" SelectedItem="{Binding SelectedNotification}" ItemsSource="{Binding NotificationsList, UpdateSourceTrigger=PropertyChanged}" FontSize="25">
                             <ListView.Resources>
                                 <DataTemplate DataType="{x:Type decanat:Notification}">
                                     <TextBlock Grid.Column="0" Text="{Binding Anomaly.Id, StringFormat='Код аномалии: {0} '}"/>
                                 </DataTemplate>
                             </ListView.Resources>
                         </ListView>
-                        <ContentControl FontSize="25" Grid.Column="1" Content="{Binding SelectedNotification.Anomaly.Description}"/>
+                        <ContentControl FontSize="30" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{Binding SelectedNotification.Anomaly.Description}"/>
                     </Grid>
                 </TabItem>
                 <TabItem MaxWidth="1000">

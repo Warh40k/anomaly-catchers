@@ -216,18 +216,20 @@ namespace testMVVM.ViewModels
             string json = File.ReadAllText(@"data\result.json");
             JObject result_object = JObject.Parse(json);
             JArray result_array = (JArray)result_object["anomaly_list"];
-
-            NotificationsList = new List<Notification>();
+            List<Notification> notify_list = new List<Notification>();
 
             for(int i=0; i< result_array.Count; i++)
             {
                 JObject item = (JObject)result_array[i];
-                NotificationsList.Add(new Notification
+                Anomaly anomaly = AnomalyList[(int)item["id"]];
+                notify_list.Add(new Notification
                 {
                     Date = DateTime.Now,
-                    Anomaly = AnomalyList[(int)item["id"]]
-                });
+                    Anomaly = anomaly
+                });   
             }
+
+            NotificationsList = notify_list;
             
         }
 
@@ -270,21 +272,22 @@ namespace testMVVM.ViewModels
             data_list.Add("Hello World");
             data_list.Add(42);
 
+            NotificationsList = new List<Notification>();
 
-            NotificationsList = new List<Notification>
-            {
-                new Notification
-                {
-                    Date = DateTime.Now,
-                    Anomaly = new Anomaly {Id = 1, Description = "Серьезная аномаль", Priority = Anomaly.Status.Dangerous},
-                },
+            //NotificationsList = new List<Notification>
+            //{
+            //    new Notification
+            //    {
+            //        Date = DateTime.Now,
+            //        Anomaly = new Anomaly {Id = 1, Description = "Серьезная аномаль", Priority = Anomaly.Status.Dangerous},
+            //    },
 
-                new Notification
-                {
-                    Date = DateTime.Today,
-                    Anomaly = new Anomaly {Id = 2, Description = "Не страшно", Priority = Anomaly.Status.Minor},
-                },
-            };
+            //    new Notification
+            //    {
+            //        Date = DateTime.Today,
+            //        Anomaly = new Anomaly {Id = 2, Description = "Не страшно", Priority = Anomaly.Status.Minor},
+            //    },
+            //};
 
 
             //using var watcher = new FileSystemWatcher(@"C:\");
