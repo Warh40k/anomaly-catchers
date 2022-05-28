@@ -1,10 +1,12 @@
 import pandas as pd
 from duplicate_functions import drop_dup_ext2, drop_dup_ext1
 from anomaly_functions import repeat_anomaly
+from sys import argv
 import json
 
 # здесь импортируем данные, на которых хотим проверить аномалии
 # 100 000 строк ext2 обрабатываются примерно 2 минуты (не стоит кидать всю выборку)
+null, path_to_db, date_from, date_to = argv
 ext2 = pd.read_csv('Датасет\\db2\\Ext2.csv')
 ext1 = pd.read_csv('Датасет\\db2\\Ext.csv')
 catch = pd.read_csv('Датасет\\db1\\catch.csv') 
