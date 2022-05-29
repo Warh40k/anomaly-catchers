@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -123,6 +124,13 @@ namespace testMVVM.ViewModels
 
         #endregion
 
+        #region Выбранный поиск аномалии
+
+        private Anomaly _SelectedAnomaly;
+        public Anomaly SelectedAnomaly { get => _SelectedAnomaly; set => Set(ref _SelectedAnomaly, value); }
+
+        #endregion
+
         #region SelectedPageIndex
 
         private int _SelectedPageIndex = 0;
@@ -237,8 +245,15 @@ namespace testMVVM.ViewModels
         private bool CanImportConfirmCommandExecute(object p) => true;
         private void OnImportConfirmCommandExecuted(object p)
         {
-            Import();
+            ImportDB();
         }
+
+        #endregion
+
+        #region Выбранная база данных
+
+        private int _SelectedDataBase;
+        public int SelectedDataBase { get => _SelectedDataBase; set => Set(ref _SelectedDataBase, value); }
 
         #endregion
 
@@ -249,36 +264,56 @@ namespace testMVVM.ViewModels
         private bool CanSearchAnomalyCommandExecute(object p) => true;
         private void OnSearchAnomalyCommandExecuted(object p)
         {
-            try
-            {
+            //try
+            //{
+                if (File.Exists("delay_report_anomaly.txt"))
+                    File.Delete("delay_report_anomaly.txt");
+
+                if (File.Exists("delay_report_anomaly.json"))
+                    File.Delete("delay_report_anomaly.json");
+
+                if ((string)DbPath == null || DateFrom > DateTo || SelectedAnomaly == null)
+                {
+                    MessageBox.Show("Неверный формат данных. Пожалуйста, проверьте корректность ввода", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                
                 string exepath = "data\\model.exe";
-                //System.Diagnostics.Process.Start(exepath, $"\"{DbPath}\" \"{DateFrom}\" \"{DateTo}\"").WaitForExit();
-                string json = File.ReadAllText(@"delay_report_anomaly.json");
-                //JObject result_object = JObject.Parse(json);
-                //JArray result_array = (JArray)result_object[""];
-                //List<Notification> notify_list = new List<Notification>();
+                System.Diagnostics.Process.Start(exepath, $"\"{DbPath}\" \"{DateFrom}\" \"{DateTo}\" \"{SelectedAnomaly.Id}e").WaitForExit();
+                  
+                List<Notification> notify_list = NotificationsList;
 
-                //for(int i=0; i< result_array.Count; i++)
-                //{
-                //    JObject item = (JObject)result_array[i];
-                //    Anomaly anomaly = AnomalyList[(int)item["id"]];
-                //    notify_list.Add(new Notification
-                //    {
-                //        Date = DateTime.Now,
-                //        Anomaly = anomaly
-                //    });   
-                //}
+                string text = File.ReadAllText("anomaly.txt");
+                string first_line = text.Substring(0, text.IndexOf('\r'));
+                if (!first_line.Contains("Выявлено 0"))
+                {
+                    Notification notify_item = new Notification
+                    {
+                        Date = DateTime.Now,
+                        Anomaly = SelectedAnomaly,
+                        Name = SelectedAnomaly.Name + "\n" + first_line,
+                    };
 
-                //NotificationsList = notify_list;
-                string human_readable_report = File.ReadAllText("delay_report_anomaly.txt");
-                HumanReport = human_readable_report;
+                    if (notify_item.Anomaly.Priority != Anomaly.Status.Minor)
+                        notify_item.SendData = true;
+                    
+                    notify_list.Add(notify_item);
+                    
+                }
+                HumanReport = text;
 
-
-            }
-            catch (IOException ex)
-            {
-                MessageBox.Show(ex.Message + "\nПопробуйте изменить входные данные", "Ошибка выполнения", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+                NotificationsList = notify_list;
+                
+                using (var file = new StreamWriter("notifications.json", false))
+                {
+                    string json = JsonSerializer.Serialize<List<Notification>>(NotificationsList);
+                    file.Write(json);
+                }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message + "\nПопробуйте изменить входные данные", "Ошибка выполнения", MessageBoxButton.OK, MessageBoxImage.Error);
+            //}
             
         }
 
@@ -298,12 +333,19 @@ namespace testMVVM.ViewModels
 
             #endregion
 
+
+            if(File.Exists("notifications.json"))
+            {
+                NotificationsList = JsonSerializer.Deserialize<List<Notification>>(File.ReadAllText("notifications.json"));
+            }
+
             AnomalyList = new List<Anomaly>
             {
-                new Anomaly {Id = 1, Name = "Отсутствие или искажение обязательной информации в ССД", Description = "", Priority = Anomaly.Status.Dangerous},
-                new Anomaly {Id = 2, Name = "Несоответствие данных привоза продукции и переработки", Description = "", Priority = Anomaly.Status.Minor},
-                new Anomaly {Id = 3, Name = "Серьезное нарушение соответствия данных между ССД и данными системы “Меркурий”", Description = "Не очень", Priority = Anomaly.Status.Middle}
+                new Anomaly {Id = 1, Name = "Наличие дупликатов", Description = "Некоторые записи дублируются. Возможно, присутствует умышленная подмена данных.", Priority = Anomaly.Status.Middle},
+                new Anomaly {Id = 2, Name = "Повторный отчет", Description = "Повторный отчет", Priority = Anomaly.Status.Minor},
             };
+
+
             var data_points = new List<DataPoint>((int)(360 / 0.1));
 
             for (var x = 0d; x <= 360; x += 0.1)
@@ -320,35 +362,6 @@ namespace testMVVM.ViewModels
 
             data_list.Add("Hello World");
             data_list.Add(42);
-
-            NotificationsList = new List<Notification>();
-
-            //NotificationsList = new List<Notification>
-            //{
-            //    new Notification
-            //    {
-            //        Date = DateTime.Now,
-            //        Anomaly = new Anomaly {Id = 1, Description = "Серьезная аномаль", Priority = Anomaly.Status.Dangerous},
-            //    },
-
-            //    new Notification
-            //    {
-            //        Date = DateTime.Today,
-            //        Anomaly = new Anomaly {Id = 2, Description = "Не страшно", Priority = Anomaly.Status.Minor},
-            //    },
-            //};
-
-
-            //using var watcher = new FileSystemWatcher(@"C:\");
-
-            //watcher.NotifyFilter = NotifyFilters.Attributes
-            //                     | NotifyFilters.CreationTime
-            //                     | NotifyFilters.DirectoryName
-            //                     | NotifyFilters.FileName
-            //                     | NotifyFilters.LastAccess
-            //                     | NotifyFilters.LastWrite
-            //                     | NotifyFilters.Security
-            //                     | NotifyFilters.Size;
 
         }
         private async Task<Dictionary<string,string>> GetReference(string path)
@@ -373,51 +386,66 @@ namespace testMVVM.ViewModels
             return reference;
         }
 
-        private async void Import()
+        private async void ImportDB()
         {
+
+            DisposeDatabases();
+
             #region Справочники
 
             try
             {
-                var fish_task = await GetReference(DbPath + @"\ref\fish.csv");
+                var fish_task = await GetReference(DbPath + @"\db1\ref\fish.csv");
 
-                var fishref = await GetReference(DbPath + @"\ref\fish.csv");
-                var prod_designate = await GetReference(DbPath + @"\ref\prod_designate.csv");
-                var prod_type = await GetReference(DbPath + @"\ref\prod_type.csv");
-                var region = await GetReference(DbPath + @"\ref\region.csv");
-                var regime = await GetReference(DbPath + @"\ref\regime.csv");
+                var fishref = await GetReference(DbPath + @"\db1\ref\fish.csv");
+                var prod_designate = await GetReference(DbPath + @"\db1\ref\prod_designate.csv");
+                var prod_type = await GetReference(DbPath + @"\db1\ref\prod_type.csv");
+                var region = await GetReference(DbPath + @"\db1\ref\region.csv");
+                var regime = await GetReference(DbPath + @"\db1\ref\regime.csv");
 
                 #endregion
+                
 
                 List<Catch> catch_report = new List<Catch>();
 
-                using(StreamReader reader = new StreamReader(DbPath + @"\catch.csv"))
+                using(StreamReader reader = new StreamReader(DbPath + @"\db1\catch.csv"))
                 {
                     reader.ReadLine();
                     while (!reader.EndOfStream)
                     {
                         var catch_row = await reader.ReadLineAsync();
                         var catch_arr = catch_row.Split(',');
+                        string id_fish, id_regime;
+                        int id_ves, permit, id_own;
+                        DateTime date;
+                        decimal catch_volume;
+                        int.TryParse(catch_arr[0], out id_ves);
+                        DateTime.TryParse(catch_arr[1], out date);
+                        decimal.TryParse(catch_arr[4].Replace('.',','), out catch_volume);
+                        int.TryParse(catch_arr[6], out permit);
+                        int.TryParse(catch_arr[7], out id_own);
+                        fishref.TryGetValue(catch_arr[3], out id_fish);
+                        regime.TryGetValue(catch_arr[5], out id_regime);
 
                         catch_report.Add(new Catch
                         {
-                            Id_ves = int.Parse(catch_arr[0]),
-                            Date = DateTime.Parse(catch_arr[1]),
-                            Id_region = region[catch_arr[2]].Trim('"'),
-                            Id_fish = fishref[catch_arr[3]].Trim('"'),
-                            Catch_volume = decimal.Parse(catch_arr[4].Replace('.', ',')),
-                            Id_regime = regime[catch_arr[5]].Trim('"'),
-                            Permit = int.Parse(catch_arr[6]),
-                            Id_own = int.Parse(catch_arr[7])
+                            Id_ves = id_ves,
+                            Date = date,
+                            Id_region = catch_arr[2],
+                            Id_fish = id_fish.Trim('"'),
+                            Catch_volume = catch_volume,
+                            Id_regime = id_regime.Trim('"'),
+                            Permit = permit,
+                            Id_own = id_own
                         });
                     }
                 }
 
-               CatchData = catch_report;
+                CatchData = catch_report;
 
                 List<Product> product_report = new List<Product>();
 
-                using(StreamReader reader = new StreamReader(DbPath + @"\product.csv"))
+                using(StreamReader reader = new StreamReader(DbPath + @"\db1\product.csv"))
                 {
                     reader.ReadLine();
                     while (!reader.EndOfStream)
@@ -439,10 +467,8 @@ namespace testMVVM.ViewModels
 
                 ProductData = product_report;
 
-
                 List<Ext> ext_report = new List<Ext>();
-
-                using (StreamReader reader = new StreamReader(DbPath + @"db2\Ext.csv"))
+                using (StreamReader reader = new StreamReader(DbPath + @"\db2\Ext.csv"))
                 {
                     reader.ReadLine();
 
@@ -482,7 +508,7 @@ namespace testMVVM.ViewModels
 
                 List<Ext2> ext2_report = new List<Ext2>();
 
-                using (StreamReader reader = new StreamReader(DbPath + @"db2\Ext2.csv"))
+                using (StreamReader reader = new StreamReader(DbPath + @"\db2\Ext2.csv"))
                 {
                     reader.ReadLine();
 
@@ -524,6 +550,13 @@ namespace testMVVM.ViewModels
                 MessageBox.Show(ex.Message, "Нет файла", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
+        }
+        void DisposeDatabases()
+        {
+            ProductData = null;
+            CatchData = null;
+            ExtData = null;
+            Ext2Data = null;
         }
     }
 }

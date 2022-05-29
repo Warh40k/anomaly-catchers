@@ -11,5 +11,7 @@ namespace testMVVM.Models.Test
         public string Name { get; set; }
         public DateTime Date { get; set; }
         public Anomaly Anomaly { get; set; }
+        
+        public bool SendData;
     }
 }
