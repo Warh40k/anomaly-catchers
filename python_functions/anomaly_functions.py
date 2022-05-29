@@ -38,3 +38,31 @@ def repeat_anomaly(ext2, txt_file='repeat_report_anomaly.txt', hours_delay=1):
 
     return anomaly_dict, anomaly_count
     
+def duplicate_anomaly(ext1, ext2, txt_file = 'duplicate_anomaly.txt'):
+
+    # df2 = ext2.copy()
+    # initial_drop = df2[df2.duplicated(['id_vsd', 'fish'], keep=False)].index
+    # df2 = df2.drop(initial_drop)
+    # tmp = df2[df2.duplicated('id_vsd', keep=False)]
+    # drop_idx = tmp.sort_values(by=['id_vsd', 'unit']).index[1::2]
+    # tmp = tmp.drop(drop_idx)
+
+    df1 = ext1.copy()
+    tmp1 = df1[df1.duplicated(['id_vsd'], keep=False)].sort_values(by=['id_vsd', 'id_ves'])
+    change_idx = df1[df1.duplicated(['id_vsd'], keep=False)].sort_values(by=['id_vsd', 'id_ves']).index
+    df1.loc[change_idx, 'Product_period'] = (tmp1.Product_period + ' - ' + tmp1.date_fishery.astype(str)).values
+    df1.loc[change_idx[::2], 'id_ves'] = (df1.loc[change_idx[1::2], 'id_ves']).values
+    drop_idx = df1[df1.duplicated(['id_vsd'], keep='first')].sort_values(by=['id_vsd', 'id_ves']).index
+    df1 = df1.loc[drop_idx]
+
+    # Человекочитаемый вид
+    with open(txt_file, 'w', encoding='utf8') as f:
+        print('Отчёт об аномалиях duplicate_anomaly\n', file=f)
+        print(f'Выявлено {len(df1)} аномалий (дубликатов)\n', file=f)
+        print(f'Владельцам следующих кораблей были отправлены предупреждения:\n', file=f)
+        print(df1[['id_own', 'id_ves']].sort_values(by=['id_own', 'id_ves']).value_counts().to_string(), file=f) 
+
+
+    return df1[['id_ves', 'id_own', 'date_fishery']].to_json(), len(df1)
+
+    duplicate, anomaly_amount
