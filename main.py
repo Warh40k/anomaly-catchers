@@ -15,7 +15,7 @@ anomaly_dict = {'repeat_report': {'visualisation':None, 'anomaly_anount':0},
                  'duplicate': {'visualisation':None, 'anomaly_anount':0}}
 
 # задание периода выборки, типа аномалии и расположения данных                 
-# null, path_to_db, date_from, date_to, anomaly_type = argv
+null, path_to_db, date_from, date_to, anomaly_type = argv
 
 ext2 = pd.read_csv(path_to_db + 'Датасет\\db2\\Ext2.csv')
 ext1 = pd.read_csv(path_to_db + 'Датасет\\db2\\Ext.csv')
