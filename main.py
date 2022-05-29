@@ -1,6 +1,6 @@
 import pandas as pd
 from python_functions.duplicate_functions import drop_dup_ext2, drop_dup_ext1
-from python_functions.anomaly_functions import repeat_anomaly, duplicate_anomaly
+from python_functions.anomaly_functions import repeat_anomaly, duplicate_anomaly, vsd_absence_anomaly
 from sys import argv
 import json
 
@@ -41,6 +41,8 @@ if anomaly_type == "1e":
     anomaly_dict['duplicate']['visualisation'] = duplicate
     anomaly_dict['duplicate']['anomaly_amount'] = anomaly_amount
 
+if anomaly_type == 3:
+    vsd_absence, anomaly_amount = vsd_absence_anomaly(samp_1, samp_2, catch)
 
 # убрать дубликаты в ext2 и подобных файлах
 samp_2 = drop_dup_ext2(samp_2)
