@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 from tqdm import tqdm
-def repeat_anomaly(ext2, txt_file='repeat_report_anomaly.txt', hours_delay=1):
+def repeat_anomaly(ext2, txt_file='anomaly.txt', hours_delay=1):
     anomaly_count = 0
     anomaly_dict = {'violation':[], 'mistake':[]}
     tmp = ext2[ext2.volume > 0].sort_values(by='volume')
@@ -38,7 +38,7 @@ def repeat_anomaly(ext2, txt_file='repeat_report_anomaly.txt', hours_delay=1):
 
     return anomaly_dict, anomaly_count
     
-def duplicate_anomaly(ext1, ext2, txt_file = 'duplicate_anomaly.txt'):
+def duplicate_anomaly(ext1, ext2, txt_file = 'anomaly.txt'):
 
     # df2 = ext2.copy()
     # initial_drop = df2[df2.duplicated(['id_vsd', 'fish'], keep=False)].index

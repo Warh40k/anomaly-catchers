@@ -8,14 +8,14 @@ date_from = '2022-04-15'
 date_to = '2022-04-20'
 path_to_db = ''
 json_file='anomaly.json'
-anomaly_type = 1
+anomaly_type = 2
 
 # подготовка словаря JSON
 anomaly_dict = {'repeat_report': {'visualisation':None, 'anomaly_anount':0},
                  'duplicate': {'visualisation':None, 'anomaly_anount':0}}
 
 # задание периода выборки, типа аномалии и расположения данных                 
-null, path_to_db, date_from, date_to, anomaly_type = argv
+# null, path_to_db, date_from, date_to, anomaly_type = argv
 
 ext2 = pd.read_csv(path_to_db + 'Датасет\\db2\\Ext2.csv')
 ext1 = pd.read_csv(path_to_db + 'Датасет\\db2\\Ext.csv')
@@ -37,21 +37,21 @@ samp_2 = ext2[(ext2.date_vsd >= pd.to_datetime(date_from)) & (ext2.date_vsd <= p
 if anomaly_type == 1:
     # аномалия "дубликаты по ключу"
     # нужны данные, подобные ext1
-    duplicate, anomaly_amount = duplicate_anomaly(samp_1, samp_2)
+    duplicate, anomaly_amount = duplicate_anomaly(ext1, ext2)
     anomaly_dict['duplicate']['visualisation'] = duplicate
     anomaly_dict['duplicate']['anomaly_amount'] = anomaly_amount
 
 
 # убрать дубликаты в ext2 и подобных файлах
-samp_2 = drop_dup_ext2(samp_2)
+ext2 = drop_dup_ext2(ext2)
 # убрать дубликаты в ext1 и подобных файлах
-samp_1 = drop_dup_ext1(samp_1)
+ext1 = drop_dup_ext1(ext1)
 
 
 if anomaly_type == 2:
     # аномалия "повторный отчет"
     # нужны данные, подобные ext2
-    repeat_report, anomaly_amount = repeat_anomaly(samp_2)
+    repeat_report, anomaly_amount = repeat_anomaly(ext2)
     anomaly_dict['repeat_report']['visualisation'] = repeat_report
     anomaly_dict['repeat_report']['anomaly_amount'] = anomaly_amount
 
