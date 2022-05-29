@@ -1,12 +1,23 @@
 import pandas as pd
 from python_functions.duplicate_functions import drop_dup_ext2, drop_dup_ext1
-from python_functions.anomaly_functions import repeat_anomaly
+from python_functions.anomaly_functions import repeat_anomaly, duplicate_anomaly
 from sys import argv
 import json
 
-# здесь импортируем данные, на которых хотим проверить аномалии
-# 100 000 строк ext2 обрабатываются примерно 2 минуты (не стоит кидать всю выборку)
-null, path_to_db, date_from, date_to = argv
+date_from = '2022-04-15'
+date_to = '2022-04-20'
+path_to_db = ''
+json_file='anomaly.json'
+
+# подготовка словаря JSON
+anomaly_dict = {'repeat_report': {'visualisation':None, 'anomaly_anount':0},
+                 'duplicate': {'visualisation':None, 'anomaly_anount':0}}
+
+# задание периода выборки и расположения данных                 
+#null, path_to_db, date_from, date_to = argv
+
+anomaly_type = 1
+
 ext2 = pd.read_csv(path_to_db + 'Датасет\\db2\\Ext2.csv')
 ext1 = pd.read_csv(path_to_db + 'Датасет\\db2\\Ext.csv')
 catch = pd.read_csv(path_to_db + 'Датасет\\db1\\catch.csv') 
@@ -19,27 +30,26 @@ product.date = pd.to_datetime(product.date)
 ext1.date_fishery = pd.to_datetime(ext1.date_fishery) 
 ext2.date_vsd = pd.to_datetime(ext2.date_vsd) 
 
-# убрать дубликаты в ext2 и подобных файлах
-ext2 = drop_dup_ext2(ext2)
-
-# убрать дубликаты в ext1 и подобных файлах
-ext1 = drop_dup_ext1(ext1)
-
-# вот здесь выборку по периоду можно задать
-date_from = '2022-04-15'
-date_to = '2022-04-20'
-
+# выборка по датам
 samp_1 = ext1[(ext1.date_fishery >= pd.to_datetime(date_from)) & (ext1.date_fishery <= pd.to_datetime(date_to))]
 samp_2 = ext2[(ext2.date_vsd >= pd.to_datetime(date_from)) & (ext2.date_vsd <= pd.to_datetime(date_to))]
 
+# аномалия "дубликаты по ключу"
+# нужны данные, подобные ext1
+duplicate, anomaly_amount = duplicate_anomaly(samp_1, samp_2)
+anomaly_dict['duplicate']['visualisation'] = duplicate
+anomaly_dict['duplicate']['anomaly_amount'] = anomaly_amount
 
-anomaly_dict = {'repeat_report': {'visualisation':None, 'anomaly_anount':0}}
 
-# поиск аномалии ошибки в единицах измерения и отправке повторного отчета
+# убрать дубликаты в ext2 и подобных файлах
+samp_2 = drop_dup_ext2(samp_2)
+# убрать дубликаты в ext1 и подобных файлах
+samp_1 = drop_dup_ext1(samp_1)
+
+
+# аномалия "повторный отчет"
 # нужны данные, подобные ext2
-json_file='anomaly.json'
-repeat_report, anomaly_amount = repeat_anomaly(samp_2) 
-
+repeat_report, anomaly_amount = repeat_anomaly(samp_2)
 anomaly_dict['repeat_report']['visualisation'] = repeat_report
 anomaly_dict['repeat_report']['anomaly_amount'] = anomaly_amount
 
