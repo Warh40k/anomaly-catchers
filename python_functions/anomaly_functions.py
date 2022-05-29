@@ -18,8 +18,8 @@ def repeat_anomaly(ext2, txt_file='anomaly.txt', hours_delay=1):
         if (c1 & c2 & c4) and not c3:
             anomaly_dict['violation'].append(lines[['id_vsd', 'date_vsd', 'volume', 'unit', 'fish']].to_json())          
             anomaly_count += 1         
-            
 
+    print(txt_file)
     # Человекочитаемый вид
     with open(txt_file, 'w', encoding='utf8') as f:
         print('Отчёт об аномалиях repeat_report\n')

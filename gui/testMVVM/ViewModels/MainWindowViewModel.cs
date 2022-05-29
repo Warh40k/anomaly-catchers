@@ -264,8 +264,8 @@ namespace testMVVM.ViewModels
         private bool CanSearchAnomalyCommandExecute(object p) => true;
         private void OnSearchAnomalyCommandExecuted(object p)
         {
-            try
-            {
+            //try
+            //{
                 if (File.Exists("delay_report_anomaly.txt"))
                     File.Delete("delay_report_anomaly.txt");
 
@@ -279,11 +279,11 @@ namespace testMVVM.ViewModels
                 }
                 
                 string exepath = "data\\model.exe";
-                System.Diagnostics.Process.Start(exepath, $"\"{DbPath}\" \"{DateFrom}\" \"{DateTo}\" \"{SelectedAnomaly.Id}").WaitForExit();
+                System.Diagnostics.Process.Start(exepath, $"\"{DbPath}\" \"{DateFrom}\" \"{DateTo}\" \"{SelectedAnomaly.Id}e").WaitForExit();
                   
                 List<Notification> notify_list = NotificationsList;
 
-                string text = File.ReadAllText("delay_report_anomaly.txt");
+                string text = File.ReadAllText("anomaly.txt");
                 string first_line = text.Substring(0, text.IndexOf('\r'));
                 if (!first_line.Contains("Выявлено 0"))
                 {
@@ -309,11 +309,11 @@ namespace testMVVM.ViewModels
                     string json = JsonSerializer.Serialize<List<Notification>>(NotificationsList);
                     file.Write(json);
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message + "\nПопробуйте изменить входные данные", "Ошибка выполнения", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message + "\nПопробуйте изменить входные данные", "Ошибка выполнения", MessageBoxButton.OK, MessageBoxImage.Error);
+            //}
             
         }
 
@@ -415,17 +415,28 @@ namespace testMVVM.ViewModels
                     {
                         var catch_row = await reader.ReadLineAsync();
                         var catch_arr = catch_row.Split(',');
+                        string id_fish, id_regime;
+                        int id_ves, permit, id_own;
+                        DateTime date;
+                        decimal catch_volume;
+                        int.TryParse(catch_arr[0], out id_ves);
+                        DateTime.TryParse(catch_arr[1], out date);
+                        decimal.TryParse(catch_arr[4].Replace('.',','), out catch_volume);
+                        int.TryParse(catch_arr[6], out permit);
+                        int.TryParse(catch_arr[7], out id_own);
+                        fishref.TryGetValue(catch_arr[3], out id_fish);
+                        regime.TryGetValue(catch_arr[5], out id_regime);
 
                         catch_report.Add(new Catch
                         {
-                            Id_ves = int.Parse(catch_arr[0]),
-                            Date = DateTime.Parse(catch_arr[1]),
-                            Id_region = region[catch_arr[2]].Trim('"'),
-                            Id_fish = fishref[catch_arr[3]].Trim('"'),
-                            Catch_volume = decimal.Parse(catch_arr[4].Replace('.', ',')),
-                            Id_regime = regime[catch_arr[5]].Trim('"'),
-                            Permit = int.Parse(catch_arr[6]),
-                            Id_own = int.Parse(catch_arr[7])
+                            Id_ves = id_ves,
+                            Date = date,
+                            Id_region = catch_arr[2],
+                            Id_fish = id_fish.Trim('"'),
+                            Catch_volume = catch_volume,
+                            Id_regime = id_regime.Trim('"'),
+                            Permit = permit,
+                            Id_own = id_own
                         });
                     }
                 }
@@ -434,7 +445,7 @@ namespace testMVVM.ViewModels
 
                 List<Product> product_report = new List<Product>();
 
-                using(StreamReader reader = new StreamReader(DbPath + @"\db2\product.csv"))
+                using(StreamReader reader = new StreamReader(DbPath + @"\db1\product.csv"))
                 {
                     reader.ReadLine();
                     while (!reader.EndOfStream)
