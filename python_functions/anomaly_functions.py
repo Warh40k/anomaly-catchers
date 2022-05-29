@@ -91,17 +91,17 @@ def vsd_absence_anomaly(Ext, Ext2, catch, txt_file='anomaly.txt'):
     for i in range(len(bad_fish_catch)): #Проходим всех юр лиц len(bad_fish_catch)
         id_own = bad_fish_catch.iloc[i]['id_own'] #id_own - это один id со стороны изсветных
     
-    for j in range(len(proverka_catch)): #Проходим все судна
-        own = proverka_catch.iloc[j]['id_own'] #Набор принадлежностей судна к юр лицам
+        for j in range(len(proverka_catch)): #Проходим все судна
+            own = proverka_catch.iloc[j]['id_own'] #Набор принадлежностей судна к юр лицам
 
-        if id_own in own: #Проверка принаждлежности судна к подозрительному юр лицу
-            id_fish = bad_fish_catch.iloc[i]['id_bad_fish'] #id_fish - набор неправильной рыбы      
-            fish = proverka_catch.iloc[j]['id_fish']
+            if id_own in own: #Проверка принаждлежности судна к подозрительному юр лицу
+                id_fish = bad_fish_catch.iloc[i]['id_bad_fish'] #id_fish - набор неправильной рыбы      
+                fish = proverka_catch.iloc[j]['id_fish']
 
-        for k_fish in id_fish: # Проверка добычи судна подозрительной рыбы
-            if(k_fish in fish):
-                ves = proverka_catch.index[j]
-                check.append([ves, id_own, k_fish])
+                for k_fish in id_fish: # Проверка добычи судна подозрительной рыбы
+                    if(k_fish in fish):
+                        ves = proverka_catch.index[j]
+                        check.append([ves, id_own, k_fish])
 
     df_check = pd.DataFrame(check)
     df_check.rename(columns={0:'id_ves', 1:'id_own', 2:'id_fish'}, inplace=True)
