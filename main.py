@@ -17,10 +17,10 @@ anomaly_dict = {'repeat_report': {'visualisation':None, 'anomaly_anount':0},
 # задание периода выборки, типа аномалии и расположения данных                 
 null, path_to_db, date_from, date_to, anomaly_type = argv
 
-ext2 = pd.read_csv(path_to_db + 'Датасет\\db2\\Ext2.csv')
-ext1 = pd.read_csv(path_to_db + 'Датасет\\db2\\Ext.csv')
-catch = pd.read_csv(path_to_db + 'Датасет\\db1\\catch.csv') 
-product = pd.read_csv(path_to_db + 'Датасет\\db1\\product.csv') 
+ext2 = pd.read_csv(path_to_db + '\\db2\\Ext2.csv')
+ext1 = pd.read_csv(path_to_db + '\\db2\\Ext.csv')
+catch = pd.read_csv(path_to_db + '\\db1\\catch.csv') 
+product = pd.read_csv(path_to_db + '\\db1\\product.csv') 
 
 # первичная обработка данных
 ext1.rename(columns={'id_fishery':'id_ves'}, inplace=True)
