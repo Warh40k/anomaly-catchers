@@ -76,7 +76,7 @@
                         <ColumnDefinition Width="31*"/>
                         <ColumnDefinition Width="20*"/>
                     </Grid.ColumnDefinitions>
-                    <DatePicker Grid.Column="0" Margin="3,3,3,3" SelectedDate="{Binding DateFrom, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2"></DatePicker>
+                    <DatePicker x:Name="date_from" Grid.Column="0" Margin="3,3,3,3" SelectedDate="{Binding DateFrom, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2"></DatePicker>
                 </Grid>
                 <Label Content="Дата конца периода"></Label>
                 <Grid>
@@ -85,7 +85,7 @@
                         <ColumnDefinition Width="31*"/>
                         <ColumnDefinition Width="20*"/>
                     </Grid.ColumnDefinitions>
-                    <DatePicker Grid.Column="0" Margin="3,3,3,3" SelectedDate="{Binding DateTo, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2"></DatePicker>
+                    <DatePicker x:Name="date_to" Grid.Column="0" Margin="3,3,3,3" SelectedDate="{Binding DateTo, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2"></DatePicker>
                 </Grid>
                 <Image Source="resources\logo.jpg" Width="250" Margin="15"></Image>
             </StackPanel>
@@ -201,7 +201,7 @@
                         </ScrollViewer>
                         <StackPanel Grid.Row="1">
                             <ComboBox VerticalAlignment="Bottom" HorizontalAlignment="Center" MinWidth="300" SelectedItem="{Binding SelectedAnomaly}" ItemsSource="{Binding AnomalyList}"/>
-                            <Button Content="Поиск" Command="{Binding SearchAnomalyCommand}" Width="120"></Button>
+                            <Button Content="Поиск" Command="{Binding SearchAnomalyCommand}" Width="120"/>
                         </StackPanel>
                     </Grid>
                 </TabItem>

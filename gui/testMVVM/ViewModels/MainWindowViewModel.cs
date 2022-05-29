@@ -266,31 +266,49 @@ namespace testMVVM.ViewModels
         {
             try
             {
+                if (File.Exists("delay_report_anomaly.txt"))
+                    File.Delete("delay_report_anomaly.txt");
+
+                if (File.Exists("delay_report_anomaly.json"))
+                    File.Delete("delay_report_anomaly.json");
+
+                if ((string)DbPath == null || DateFrom > DateTo || SelectedAnomaly == null)
+                {
+                    MessageBox.Show("Неверный формат данных. Пожалуйста, проверьте корректность ввода", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
                 
                 string exepath = "data\\model.exe";
-                //System.Diagnostics.Process.Start(exepath, $"\"{DbPath}\" \"{DateFrom}\" \"{DateTo}\" \"{SelectedAnomaly}").WaitForExit();
-                 
-                List<Notification> notify_list = new List<Notification>();
+                System.Diagnostics.Process.Start(exepath, $"\"{DbPath}\" \"{DateFrom}\" \"{DateTo}\"").WaitForExit();
+                  
+                List<Notification> notify_list = NotificationsList;
 
                 string text = File.ReadAllText("delay_report_anomaly.txt");
                 string first_line = text.Substring(0, text.IndexOf('\r'));
                 if (!first_line.Contains("Выявлено 0"))
                 {
-                    notify_list.Add(new Notification
+                    Notification notify_item = new Notification
                     {
                         Date = DateTime.Now,
                         Anomaly = SelectedAnomaly,
-                        Name = SelectedAnomaly.Name + "\n" + first_line
-                    });
+                        Name = SelectedAnomaly.Name + "\n" + first_line,
+                    };
 
-
+                    if (notify_item.Anomaly.Priority != Anomaly.Status.Minor)
+                        notify_item.SendData = true;
+                    
+                    notify_list.Add(notify_item);
+                    
                 }
                 HumanReport = text;
 
                 NotificationsList = notify_list;
-
-
-
+                
+                using (var file = new StreamWriter("notifications.json", false))
+                {
+                    string json = JsonSerializer.Serialize<List<Notification>>(NotificationsList);
+                    file.Write(json);
+                }
             }
             catch (Exception ex)
             {
@@ -315,12 +333,20 @@ namespace testMVVM.ViewModels
 
             #endregion
 
+
+            if(File.Exists("notifications.json"))
+            {
+                NotificationsList = JsonSerializer.Deserialize<List<Notification>>(File.ReadAllText("notifications.json"));
+            }
+
             AnomalyList = new List<Anomaly>
             {
                 new Anomaly {Id = 1, Name = "Отсутствие или искажение обязательной информации в ССД", Description = "", Priority = Anomaly.Status.Middle},
                 new Anomaly {Id = 2, Name = "Несоответствие данных привоза продукции и переработки", Description = "Не очень", Priority = Anomaly.Status.Minor},
                 new Anomaly {Id = 3, Name = "Серьезное нарушение соответствия данных между ССД и данными системы “Меркурий”", Description = "Не очень", Priority = Anomaly.Status.Middle}
             };
+
+
             var data_points = new List<DataPoint>((int)(360 / 0.1));
 
             for (var x = 0d; x <= 360; x += 0.1)
@@ -337,35 +363,6 @@ namespace testMVVM.ViewModels
 
             data_list.Add("Hello World");
             data_list.Add(42);
-
-            NotificationsList = new List<Notification>();
-
-            //NotificationsList = new List<Notification>
-            //{
-            //    new Notification
-            //    {
-            //        Date = DateTime.Now,
-            //        Anomaly = new Anomaly {Id = 1, Description = "Серьезная аномаль", Priority = Anomaly.Status.Dangerous},
-            //    },
-
-            //    new Notification
-            //    {
-            //        Date = DateTime.Today,
-            //        Anomaly = new Anomaly {Id = 2, Description = "Не страшно", Priority = Anomaly.Status.Minor},
-            //    },
-            //};
-
-
-            //using var watcher = new FileSystemWatcher(@"C:\");
-
-            //watcher.NotifyFilter = NotifyFilters.Attributes
-            //                     | NotifyFilters.CreationTime
-            //                     | NotifyFilters.DirectoryName
-            //                     | NotifyFilters.FileName
-            //                     | NotifyFilters.LastAccess
-            //                     | NotifyFilters.LastWrite
-            //                     | NotifyFilters.Security
-            //                     | NotifyFilters.Size;
 
         }
         private async Task<Dictionary<string,string>> GetReference(string path)
